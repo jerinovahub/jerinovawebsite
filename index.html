@@ -33,7 +33,7 @@
 *{margin:0;padding:0;box-sizing:border-box;cursor:default}
 html{scroll-behavior:smooth}
 body{background:var(--blk);color:var(--wht);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;}
-a,button{cursor:pointer}
+a,button,.track,.rcard,.erow,.gitem,.vb,.pb-playbtn,.pb-btn{cursor:pointer}
 
 
 
@@ -121,7 +121,8 @@ nav{
   align-items:center;gap:1rem;
   padding:.8rem 1.1rem;background:var(--blk3);
   border:1px solid transparent;
-  transition:background .18s,border-color .18s;;
+  transition:background .18s,border-color .18s;
+  cursor:pointer;
 }
 .track:hover,.track.playing{background:var(--blk4);border-color:var(--bdro)}
 .track.playing .tn,.track.playing .tt{color:var(--org)}
