@@ -6,12 +6,76 @@
 <title>JERI NOVA — Electronic Artist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- ALL FUNCTIONS DEFINED IN HEAD — Cloudflare cannot interfere here -->
+<script>
+var MUSIC_BASE='https://raw.githubusercontent.com/jerinovahub/music/main/';
+var TRACKS=[
+  {title:'Amour',            file:'AMOUR%2000.mp3'},
+  {title:'Colours Mn Edit',  file:'Colours%20Mn%20edit.mp3'},
+  {title:'Fat Diamond Drift',file:'Fat%20Diamond%20Drift%2000.mp3'},
+  {title:'Krispy Wallace',   file:'Krispy%20Wallace.mp3'},
+  {title:'Love How U Want',  file:'Love%20How%20U%20Want%2000.mp3'},
+  {title:'Mr Guder',         file:'Mr%20guder%2000.mp3'}
+];
+var PHOTOS=['DSC00503-Enhanced-NR.jpg','DSC00504-Enhanced-NR.jpg','DSC00505-Enhanced-NR.jpg'];
+var curIdx=-1, isPlaying=false, vMode=0;
+
+function loadTrack(idx){
+  var a=document.getElementById('aud');
+  if(!a)return;
+  curIdx=idx;
+  a.src=MUSIC_BASE+TRACKS[idx].file;
+  var v=document.getElementById('vol');
+  a.volume=v?parseFloat(v.value):0.85;
+  a.play().catch(function(){});
+  isPlaying=true;
+  updatePBIcon();
+  var t=document.getElementById('pb-title');
+  if(t)t.textContent=TRACKS[idx].title;
+  var art=document.getElementById('pb-art');
+  if(art)art.innerHTML='<img src="'+PHOTOS[idx%PHOTOS.length]+'" style="width:100%;height:100%;object-fit:cover">';
+  var rows=document.querySelectorAll('.track');
+  for(var i=0;i<rows.length;i++)rows[i].classList.toggle('playing',i===idx);
+}
+function togglePlay(){
+  var a=document.getElementById('aud');
+  if(!a)return;
+  if(curIdx<0){loadTrack(0);return;}
+  if(isPlaying){a.pause();isPlaying=false;}
+  else{a.play().catch(function(){});isPlaying=true;}
+  updatePBIcon();
+}
+function prevTrack(){loadTrack((curIdx-1+TRACKS.length)%TRACKS.length);}
+function nextTrack(){loadTrack((curIdx+1)%TRACKS.length);}
+function setVol(v){var a=document.getElementById('aud');if(a)a.volume=parseFloat(v);}
+function seekTo(e){
+  var a=document.getElementById('aud');
+  if(!a||!a.duration)return;
+  var r=e.currentTarget.getBoundingClientRect();
+  a.currentTime=((e.clientX-r.left)/r.width)*a.duration;
+}
+function fmt(s){var m=Math.floor(s/60),sc=Math.floor(s%60);return m+':'+(sc<10?'0':'')+sc;}
+function updatePBIcon(){
+  var ico=document.getElementById('pb-ico');
+  if(!ico)return;
+  ico.innerHTML=isPlaying
+    ?'<rect x="3" y="2" width="4" height="14" fill="#080808"/><rect x="11" y="2" width="4" height="14" fill="#080808"/>'
+    :'<path d="M4 2.5l11 6.5-11 6.5z"/>';
+}
+function setVizMode(n,btn){
+  vMode=n;
+  var btns=document.querySelectorAll('.vb');
+  for(var i=0;i<btns.length;i++)btns[i].classList.remove('on');
+  btn.classList.add('on');
+}
+</script>
+
 <style>
 :root{
   --blk:#080808;--blk2:#101010;--blk3:#181818;--blk4:#222222;
   --org:#ff5500;--org2:#ff7a2f;--org3:rgba(255,85,0,.12);
-  --blu:#1da0f2;--blu2:rgba(29,160,242,.10);
-  --wht:#f0f0f0;--gry:#888;--gry2:#444;
+  --blu:#1da0f2;--wht:#f0f0f0;--gry:#888;--gry2:#444;
   --bdr:rgba(255,255,255,.07);--bdro:rgba(255,85,0,.22);
 }
 *{margin:0;padding:0;box-sizing:border-box;cursor:default}
@@ -19,7 +83,6 @@ html{scroll-behavior:smooth}
 body{background:var(--blk);color:var(--wht);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden}
 a,button,.track,.rcard,.erow,.vb,.pb-playbtn,.pb-btn,.gitem{cursor:pointer}
 
-/* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:58px;background:rgba(8,8,8,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdr)}
 .logo{font-family:'Anton',sans-serif;font-size:1.3rem;letter-spacing:.14em;color:var(--wht);text-decoration:none}
 .logo em{color:var(--org);font-style:normal}
@@ -29,16 +92,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .nav-cta{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.12em;padding:.46rem 1.2rem;border:1px solid var(--org);color:var(--org);text-decoration:none;text-transform:uppercase;transition:background .2s,color .2s}
 .nav-cta:hover{background:var(--org);color:var(--blk)}
 
-/* HERO */
 #hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;padding-top:58px}
 #hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
-.hero-photo-bg{position:absolute;inset:0;z-index:0;background:url('DSC00503-Enhanced-NR.jpg') center center/cover no-repeat}
-.hero-photo-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(8,8,8,.72) 0%,rgba(8,8,8,.55) 40%,rgba(8,8,8,.88) 100%)}
+.hero-photo-bg{position:absolute;inset:0;z-index:0;background:url('DSC00503-Enhanced-NR.jpg') center/cover no-repeat}
+.hero-photo-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(8,8,8,.72),rgba(8,8,8,.55) 40%,rgba(8,8,8,.88))}
 .hero-inner{position:relative;z-index:2;padding:2rem}
 .hero-kicker{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.32em;color:var(--org);text-transform:uppercase;margin-bottom:1.3rem;opacity:0;animation:fadeup .9s .3s forwards}
 .hero-name{font-family:'Anton',sans-serif;font-size:clamp(5rem,15vw,12rem);line-height:.88;letter-spacing:.03em;color:var(--wht);opacity:0;animation:fadeup .9s .5s forwards}
 .hero-name em{color:var(--org);font-style:normal;display:block}
-.hero-tag{font-family:'Space Mono',monospace;font-size:clamp(.65rem,1.4vw,.85rem);letter-spacing:.38em;color:var(--gry);text-transform:uppercase;margin-top:.5rem;margin-bottom:2.5rem;opacity:0;animation:fadeup .9s .7s forwards}
+.hero-tag{font-family:'Space Mono',monospace;font-size:clamp(.65rem,1.4vw,.85rem);letter-spacing:.38em;color:var(--gry);text-transform:uppercase;margin:.5rem 0 2.5rem;opacity:0;animation:fadeup .9s .7s forwards}
 #hviz{width:min(580px,88vw);height:56px;display:flex;align-items:flex-end;justify-content:center;gap:2px;margin:0 auto 2.5rem;opacity:0;animation:fadein 1s 1.4s forwards}
 .hb{flex:1;max-width:6px;border-radius:2px 2px 0 0;background:var(--org);opacity:.8;animation:hbounce var(--d,1s) ease-in-out infinite alternate}
 @keyframes hbounce{from{height:var(--mn,3px)}to{height:var(--mx,44px)}}
@@ -54,14 +116,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 @keyframes fadeup{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 
-/* SHARED */
 .wrap{max-width:1180px;margin:0 auto;padding:0 3rem}
 .sec-num{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.28em;color:var(--org);text-transform:uppercase;display:block;margin-bottom:.65rem}
 .sec-h{font-family:'Anton',sans-serif;font-size:clamp(2rem,4.5vw,3.5rem);letter-spacing:.04em;line-height:1;margin-bottom:.8rem}
 .sec-h span{color:var(--org)}
 .sec-sub{font-size:.92rem;color:var(--gry);line-height:1.75;max-width:520px}
 
-/* 01 MUSIC */
 #music{background:var(--blk2);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding:6.5rem 0}
 .tracklist{display:flex;flex-direction:column;gap:2px;margin-top:2rem}
 .track{display:grid;grid-template-columns:40px 1fr 140px 58px;align-items:center;gap:1rem;padding:.8rem 1.1rem;background:var(--blk3);border:1px solid transparent;transition:background .18s,border-color .18s;cursor:pointer}
@@ -79,17 +139,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .tw{width:2px;border-radius:1px;background:var(--org)}
 .tdur{font-family:'Space Mono',monospace;font-size:.63rem;color:var(--gry2);text-align:right}
 
-/* PLAYER BAR */
 #pbar{position:fixed;bottom:0;left:0;right:0;z-index:500;height:68px;background:var(--blk2);border-top:1px solid var(--bdro);display:flex;align-items:center;gap:1.2rem;padding:0 1.8rem}
-.pb-art{width:42px;height:42px;flex-shrink:0;overflow:hidden;border:1px solid var(--bdro);background:var(--blk3)}
+.pb-art{width:42px;height:42px;flex-shrink:0;overflow:hidden;border:1px solid var(--bdro);background:var(--blk3);display:flex;align-items:center;justify-content:center}
 .pb-art img{width:100%;height:100%;object-fit:cover;display:block}
 .pb-nowplay{min-width:0;width:170px;flex-shrink:0}
 .pb-title{font-size:.8rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pb-artist{font-size:.7rem;color:var(--gry);margin-top:.1rem}
 .pb-ctrl{display:flex;align-items:center;gap:.8rem;flex-shrink:0}
-.pb-btn{width:32px;height:32px;border:none;background:none;color:var(--gry);display:flex;align-items:center;justify-content:center;transition:color .2s}
+.pb-btn{width:32px;height:32px;border:none;background:none;color:var(--gry);display:flex;align-items:center;justify-content:center;transition:color .2s;cursor:pointer}
 .pb-btn:hover{color:var(--wht)}
-.pb-playbtn{width:40px;height:40px;border-radius:50%;background:var(--org);border:none;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.pb-playbtn{width:40px;height:40px;border-radius:50%;background:var(--org);border:none;display:flex;align-items:center;justify-content:center;transition:transform .15s;cursor:pointer}
 .pb-playbtn:hover{transform:scale(1.08)}
 .pb-prog{flex:1;display:flex;flex-direction:column;gap:.42rem}
 .pb-track-wrap{width:100%;height:4px;background:var(--blk4);border-radius:2px;position:relative;cursor:pointer}
@@ -98,7 +157,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .pb-vol{display:flex;align-items:center;gap:.5rem;width:90px;flex-shrink:0}
 .pb-vol input{flex:1;accent-color:var(--org);cursor:pointer}
 
-/* 02 VISUALS */
 #visuals{padding:0;background:var(--blk)}
 .vis-stage{height:80vh;min-height:480px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
 #vis-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -109,18 +167,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .vb{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.12em;padding:.38rem .9rem;border:1px solid var(--bdr);color:var(--gry);background:rgba(8,8,8,.75);text-transform:uppercase;transition:border-color .2s,color .2s;cursor:pointer}
 .vb.on,.vb:hover{border-color:var(--org);color:var(--org)}
 
-/* 03 GALLERY */
 #gallery{background:var(--blk);padding:6.5rem 0}
 .gallery-grid{display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:auto auto;gap:3px;margin-top:2.5rem}
-.gitem{overflow:hidden;position:relative;background:var(--blk3)}
+.gitem{overflow:hidden;position:relative;background:var(--blk3);cursor:default}
 .gitem:first-child{grid-row:span 2}
-.gitem img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease,filter .4s;filter:brightness(.9) saturate(.85)}
+.gitem img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s,filter .4s;filter:brightness(.9) saturate(.85)}
 .gitem:hover img{transform:scale(1.04);filter:brightness(1) saturate(1)}
 .gitem-cap{position:absolute;bottom:0;left:0;right:0;padding:1.2rem 1rem .9rem;background:linear-gradient(to top,rgba(8,8,8,.88),transparent);opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s}
 .gitem:hover .gitem-cap{opacity:1;transform:translateY(0)}
 .gitem-cap p{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.12em;color:var(--org);text-transform:uppercase}
 
-/* 04 RELEASES */
 #releases{background:var(--blk2);border-top:1px solid var(--bdr);padding:6.5rem 0}
 .rel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1px;background:var(--bdr);border:1px solid var(--bdr);margin-top:2.5rem}
 .rcard{background:var(--blk);overflow:hidden;transition:background .2s;cursor:pointer}
@@ -146,13 +202,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .rtag.o{border-color:var(--bdro);color:var(--org)}
 .rtag.b{border-color:rgba(29,160,242,.28);color:var(--blu)}
 
-/* 05 ABOUT */
 #about{background:var(--blk);border-top:1px solid var(--bdr);padding:6.5rem 0}
 .about-grid{display:grid;grid-template-columns:1fr 1.25fr;gap:5.5rem;align-items:center}
 .about-photo-wrap{position:relative}
 .about-photo{width:100%;aspect-ratio:3/4;overflow:hidden;border:1px solid var(--bdr);position:relative}
-.about-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.92) saturate(.88);transition:filter .4s}
-.about-photo:hover img{filter:brightness(1) saturate(1)}
+.about-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.92) saturate(.88)}
 .about-photo::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--org);z-index:1}
 .photo-label{position:absolute;bottom:0;left:0;right:0;padding:1.4rem;background:linear-gradient(to top,rgba(8,8,8,.95),transparent)}
 .photo-label p{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.2em;color:var(--org);text-transform:uppercase;margin-bottom:.3rem}
@@ -169,7 +223,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .sn{font-family:'Anton',sans-serif;font-size:1.9rem;color:var(--org);line-height:1;display:block}
 .sl{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.12em;color:var(--gry);text-transform:uppercase;margin-top:.25rem;display:block}
 
-/* 06 EVENTS */
 #events{background:var(--blk2);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding:6.5rem 0}
 .erow{display:grid;grid-template-columns:68px 1fr auto;align-items:center;gap:2rem;padding:1.5rem 0;border-bottom:1px solid var(--bdr);position:relative;transition:padding-left .22s,background .2s;cursor:pointer}
 .erow::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--org);transition:width .22s}
@@ -182,14 +235,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .epill{padding:.28rem .85rem;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--bdro);color:var(--org);white-space:nowrap}
 .epill.sold{border-color:var(--gry2);color:var(--gry2)}
 
-/* 07 CONTACT */
 #contact{background:var(--blk);padding:6.5rem 0}
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
 .contact-l h2{font-family:'Anton',sans-serif;font-size:clamp(2.4rem,5.5vw,4rem);letter-spacing:.04em;line-height:1.05;margin-bottom:.9rem}
 .contact-l h2 em{color:var(--org);font-style:normal}
 .contact-l p{font-size:.95rem;color:var(--gry);line-height:1.82;margin-bottom:2rem}
-.clinks{display:flex;flex-direction:column;gap:.6rem;margin-bottom:2.5rem}
-.clink{display:flex;align-items:center;gap:.9rem;padding:.82rem 1.1rem;background:var(--blk3);border:1px solid var(--bdr);text-decoration:none;color:var(--wht);transition:border-color .2s,background .2s}
+.clinks{display:flex;flex-direction:column;gap:.6rem}
+.clink{display:flex;align-items:center;gap:.9rem;padding:.82rem 1.1rem;background:var(--blk3);border:1px solid var(--bdr);text-decoration:none;color:var(--wht);transition:border-color .2s,background .2s;cursor:pointer}
 .clink:hover{border-color:var(--bdro);background:var(--blk4)}
 .clink-ico{width:34px;height:34px;background:var(--org3);border:1px solid var(--bdro);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .clink-lbl{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.15em;color:var(--gry);text-transform:uppercase;display:block;margin-bottom:.12rem}
@@ -206,36 +258,25 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .fsub{width:100%;padding:.88rem;background:var(--org);color:var(--blk);border:none;font-family:'Anton',sans-serif;font-size:1.05rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .15s}
 .fsub:hover{background:var(--org2);transform:translateY(-2px)}
 
-/* FOOTER */
 footer{background:var(--blk);border-top:1px solid var(--bdr);padding:1.8rem 3rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:68px}
 footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em;color:var(--gry2);text-transform:uppercase}
 .flogo{font-family:'Anton',sans-serif;font-size:1rem;letter-spacing:.14em;color:var(--gry2)}
 .flogo em{color:var(--org);font-style:normal}
 
-/* MOBILE */
 @media(max-width:860px){
-  nav{padding:0 1.2rem}
-  .nav-links{display:none}
-  .wrap{padding:0 1.3rem}
+  nav{padding:0 1.2rem}.nav-links{display:none}.wrap{padding:0 1.3rem}
   #music,#gallery,#releases,#about,#events,#contact{padding:4.5rem 0}
   .about-grid,.contact-grid{grid-template-columns:1fr;gap:2.8rem}
-  .gallery-grid{grid-template-columns:1fr;grid-template-rows:auto}
-  .gitem:first-child{grid-row:span 1}
-  .frow{grid-template-columns:1fr}
-  .erow{grid-template-columns:54px 1fr}
-  .epill{display:none}
-  footer{padding:1.4rem;margin-bottom:68px}
-  #pbar{gap:.7rem;padding:0 1rem}
-  .pb-nowplay{width:120px}
-  .pb-vol{display:none}
-  .track{grid-template-columns:34px 1fr 48px}
-  .twav{display:none}
+  .gallery-grid{grid-template-columns:1fr;grid-template-rows:auto}.gitem:first-child{grid-row:span 1}
+  .frow{grid-template-columns:1fr}.erow{grid-template-columns:54px 1fr}.epill{display:none}
+  footer{padding:1.4rem;margin-bottom:68px}#pbar{gap:.7rem;padding:0 1rem}
+  .pb-nowplay{width:120px}.pb-vol{display:none}
+  .track{grid-template-columns:34px 1fr 48px}.twav{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="#" class="logo">JERI<em>.</em>NOVA</a>
   <ul class="nav-links">
@@ -248,7 +289,6 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   <a href="#contact" class="nav-cta">Book Now</a>
 </nav>
 
-<!-- HERO -->
 <section id="hero">
   <div class="hero-photo-bg"></div>
   <canvas id="hero-canvas"></canvas>
@@ -262,13 +302,9 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
       <a href="#events" class="btn-b">Upcoming Shows</a>
     </div>
   </div>
-  <div class="scroll-cue">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
-  </div>
+  <div class="scroll-cue"><span>Scroll</span><div class="scroll-line"></div></div>
 </section>
 
-<!-- 01 MUSIC -->
 <section id="music">
   <div class="wrap">
     <span class="sec-num">01 — Music</span>
@@ -278,7 +314,6 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   </div>
 </section>
 
-<!-- 02 VISUALS -->
 <section id="visuals">
   <div class="vis-stage">
     <canvas id="vis-canvas"></canvas>
@@ -295,29 +330,18 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   </div>
 </section>
 
-<!-- 03 GALLERY -->
 <section id="gallery">
   <div class="wrap">
     <span class="sec-num">03 — Gallery</span>
     <h2 class="sec-h"><span>Photos</span></h2>
     <div class="gallery-grid">
-      <div class="gitem" style="min-height:400px">
-        <img src="DSC00503-Enhanced-NR.jpg" alt="Jeri Nova" loading="lazy">
-        <div class="gitem-cap"><p>Jeri Nova — Live</p></div>
-      </div>
-      <div class="gitem" style="min-height:196px">
-        <img src="DSC00504-Enhanced-NR.jpg" alt="Jeri Nova" loading="lazy">
-        <div class="gitem-cap"><p>Studio Session</p></div>
-      </div>
-      <div class="gitem" style="min-height:196px">
-        <img src="DSC00505-Enhanced-NR.jpg" alt="Jeri Nova" loading="lazy">
-        <div class="gitem-cap"><p>Jeri Nova</p></div>
-      </div>
+      <div class="gitem" style="min-height:400px"><img src="DSC00503-Enhanced-NR.jpg" alt="Jeri Nova" loading="lazy"><div class="gitem-cap"><p>Jeri Nova — Live</p></div></div>
+      <div class="gitem" style="min-height:196px"><img src="DSC00504-Enhanced-NR.jpg" alt="Jeri Nova" loading="lazy"><div class="gitem-cap"><p>Studio Session</p></div></div>
+      <div class="gitem" style="min-height:196px"><img src="DSC00505-Enhanced-NR.jpg" alt="Jeri Nova" loading="lazy"><div class="gitem-cap"><p>Jeri Nova</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- 04 RELEASES -->
 <section id="releases">
   <div class="wrap">
     <span class="sec-num">04 — Releases</span>
@@ -333,7 +357,6 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   </div>
 </section>
 
-<!-- 05 ABOUT -->
 <section id="about">
   <div class="wrap">
     <div class="about-grid">
@@ -349,8 +372,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
         <h2 class="sec-h">Sound. <span>Vision.</span><br>Motion.</h2>
         <p>Jeri Nova is a Las Vegas-based electronic music artist and producer whose sound traverses the outer edges of <strong>techno, ambient, and experimental electronic music</strong> — with an ear tuned to the cosmos and a heart locked to the grid.</p>
         <p>Every live set is an immersive experience where visuals and sound collapse into a single unified force — leaving audiences suspended between rhythm and reverie. Whether it's a sweaty club basement or an open desert stage, Jeri Nova brings the frequency.</p>
-        <p>Follow on Instagram: <a href="https://www.instagram.com/jeri_nova" target="_blank">@jeri_nova</a><br>
-        Email: <a href="/cdn-cgi/l/email-protection#68020d1a0106071e09280f05090104460b0705"><span class="__cf_email__" data-cfemail="6e040b1c070001180f2e09030f0702400d0103">[email&#160;protected]</span></a></p>
+        <p>Follow on Instagram: <a href="https://www.instagram.com/jeri_nova" target="_blank">@jeri_nova</a><br>Email: <a href="mailto:jerinova@gmail.com">jerinova@gmail.com</a></p>
         <div class="stats">
           <div class="stat"><span class="sn">8+</span><span class="sl">Years</span></div>
           <div class="stat"><span class="sn">200+</span><span class="sl">Sets</span></div>
@@ -362,7 +384,6 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   </div>
 </section>
 
-<!-- 06 EVENTS -->
 <section id="events">
   <div class="wrap">
     <span class="sec-num">06 — Events</span>
@@ -375,31 +396,18 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   </div>
 </section>
 
-<!-- 07 CONTACT -->
 <section id="contact">
   <div class="wrap">
     <div class="contact-grid">
       <div class="contact-l">
         <span class="sec-num">07 — Contact</span>
         <h2>Let's Make<br><em>Noise</em> Together</h2>
-        <p>Available for bookings, festival slots, collaborations, licensing, and press. Reach out via email or Instagram.</p>
+        <p>Available for bookings, festival slots, collaborations, licensing, and press.</p>
         <div class="clinks">
-          <a href="/cdn-cgi/l/email-protection#08626d7a6166677e69486f65696164266b6765" class="clink">
-            <div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg></div>
-            <div><span class="clink-lbl">Email</span><span class="clink-val"><em>jerinova</em>@gmail.com</span></div>
-          </a>
-          <a href="https://www.instagram.com/jeri_nova" target="_blank" class="clink">
-            <div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="#ff5500" stroke="none"/></svg></div>
-            <div><span class="clink-lbl">Instagram</span><span class="clink-val"><em>@jeri_nova</em></span></div>
-          </a>
-          <a href="https://soundcloud.com/jeri-nova" target="_blank" class="clink">
-            <div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="#ff5500"><path d="M1 17.5a3 3 0 0 0 3 2.5h13a4 4 0 0 0 0-8h-.1a6 6 0 0 0-11.6 1.5A3 3 0 0 0 1 17.5z"/></svg></div>
-            <div><span class="clink-lbl">SoundCloud</span><span class="clink-val"><em>soundcloud.com</em>/jeri-nova</span></div>
-          </a>
-          <a href="https://github.com/jerinovahub/jerinovawebsite" target="_blank" class="clink">
-            <div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="#ff5500"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.22.68-.48v-1.69c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg></div>
-            <div><span class="clink-lbl">GitHub</span><span class="clink-val"><em>jerinovahub</em>/jerinovawebsite</span></div>
-          </a>
+          <a href="mailto:jerinova@gmail.com" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg></div><div><span class="clink-lbl">Email</span><span class="clink-val"><em>jerinova</em>@gmail.com</span></div></a>
+          <a href="https://www.instagram.com/jeri_nova" target="_blank" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="#ff5500" stroke="none"/></svg></div><div><span class="clink-lbl">Instagram</span><span class="clink-val"><em>@jeri_nova</em></span></div></a>
+          <a href="https://soundcloud.com/jeri-nova" target="_blank" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="#ff5500"><path d="M1 17.5a3 3 0 0 0 3 2.5h13a4 4 0 0 0 0-8h-.1a6 6 0 0 0-11.6 1.5A3 3 0 0 0 1 17.5z"/></svg></div><div><span class="clink-lbl">SoundCloud</span><span class="clink-val"><em>soundcloud.com</em>/jeri-nova</span></div></a>
+          <a href="https://github.com/jerinovahub/jerinovawebsite" target="_blank" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="#ff5500"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.22.68-.48v-1.69c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg></div><div><span class="clink-lbl">GitHub</span><span class="clink-val"><em>jerinovahub</em>/jerinovawebsite</span></div></a>
         </div>
       </div>
       <div>
@@ -408,16 +416,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
             <div class="fg"><label>Name</label><input type="text" placeholder="Your name" required></div>
             <div class="fg"><label>Email</label><input type="email" placeholder="you@email.com" required></div>
           </div>
-          <div class="fg"><label>Subject</label>
-            <select>
-              <option value="">Select...</option>
-              <option>Booking / Performance</option>
-              <option>Collaboration / Production</option>
-              <option>Licensing / Sync</option>
-              <option>Press / Media</option>
-              <option>General</option>
-            </select>
-          </div>
+          <div class="fg"><label>Subject</label><select><option value="">Select...</option><option>Booking / Performance</option><option>Collaboration / Production</option><option>Licensing / Sync</option><option>Press / Media</option><option>General</option></select></div>
           <div class="fg"><label>Message</label><textarea placeholder="Tell me about your venue, project, or vision..."></textarea></div>
           <button type="submit" class="fsub">Send Message</button>
         </form>
@@ -432,26 +431,16 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   <p>GitHub Pages &nbsp;·&nbsp; Cloudflare DNS</p>
 </footer>
 
-<!-- FIXED PLAYER BAR -->
 <div id="pbar">
-  <div class="pb-art" id="pb-art">
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="#444"><path d="M5 3l12 7-12 7V3z"/></svg>
-  </div>
-  <div class="pb-nowplay">
-    <div class="pb-title" id="pb-title">Select a track</div>
-    <div class="pb-artist">Jeri Nova</div>
-  </div>
+  <div class="pb-art" id="pb-art"><svg width="20" height="20" viewBox="0 0 20 20" fill="#444"><path d="M5 3l12 7-12 7V3z"/></svg></div>
+  <div class="pb-nowplay"><div class="pb-title" id="pb-title">Select a track</div><div class="pb-artist">Jeri Nova</div></div>
   <div class="pb-ctrl">
     <button class="pb-btn" onclick="prevTrack()"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h2v12H3zm2.5 6 7.5 5V3z"/></svg></button>
-    <button class="pb-playbtn" id="pb-playbtn" onclick="togglePlay()">
-      <svg id="pb-ico" width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg>
-    </button>
+    <button class="pb-playbtn" onclick="togglePlay()"><svg id="pb-ico" width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></button>
     <button class="pb-btn" onclick="nextTrack()"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 2h2v12h-2zm-1.5 6L2 3v10z"/></svg></button>
   </div>
   <div class="pb-prog">
-    <div class="pb-track-wrap" id="pb-track-wrap" onclick="seekTo(event)">
-      <div class="pb-track-fill" id="pb-fill"></div>
-    </div>
+    <div class="pb-track-wrap" id="pb-track-wrap" onclick="seekTo(event)"><div class="pb-track-fill" id="pb-fill"></div></div>
     <div class="pb-times"><span id="pb-cur">0:00</span><span id="pb-dur">0:00</span></div>
   </div>
   <div class="pb-vol">
@@ -463,84 +452,70 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
 <audio id="aud" preload="none"></audio>
 
 <script>
-var MUSIC_BASE = 'https://raw.githubusercontent.com/jerinovahub/music/main/';
-var TRACKS = [
-  { title:'Amour',             file:'AMOUR%2000.mp3' },
-  { title:'Colours Mn Edit',   file:'Colours%20Mn%20edit.mp3' },
-  { title:'Fat Diamond Drift', file:'Fat%20Diamond%20Drift%2000.mp3' },
-  { title:'Krispy Wallace',    file:'Krispy%20Wallace.mp3' },
-  { title:'Love How U Want',   file:'Love%20How%20U%20Want%2000.mp3' },
-  { title:'Mr Guder',          file:'Mr%20guder%2000.mp3' }
-];
-var PHOTOS = ['DSC00503-Enhanced-NR.jpg','DSC00504-Enhanced-NR.jpg','DSC00505-Enhanced-NR.jpg'];
+/* All DOM-dependent code runs after page loads */
+window.addEventListener('DOMContentLoaded', function(){
 
-/* AUDIO ENGINE — defined early so onclick attributes can call loadTrack() */
-var aud = document.getElementById('aud');
-var curIdx = -1, isPlaying = false;
+  /* Audio time/ended listeners */
+  var a = document.getElementById('aud');
+  a.addEventListener('timeupdate', function(){
+    if(!a.duration) return;
+    document.getElementById('pb-fill').style.width = ((a.currentTime/a.duration)*100)+'%';
+    document.getElementById('pb-cur').textContent = fmt(a.currentTime);
+    document.getElementById('pb-dur').textContent = fmt(a.duration);
+    var rows = document.querySelectorAll('.track');
+    if(rows[curIdx]) rows[curIdx].querySelector('.tdur').textContent = fmt(a.duration);
+  });
+  a.addEventListener('ended', nextTrack);
 
-function loadTrack(idx){
-  curIdx = idx;
-  var tr = TRACKS[idx];
-  aud = document.getElementById('aud');
-  aud.src = MUSIC_BASE + tr.file;
-  aud.volume = 0.85;
-  var volEl = document.getElementById('vol');
-  if(volEl) aud.volume = parseFloat(volEl.value);
-  aud.play().catch(function(){});
-  isPlaying = true;
-  updatePBIcon();
-  var titleEl = document.getElementById('pb-title');
-  if(titleEl) titleEl.textContent = tr.title;
-  var photo = PHOTOS[idx % PHOTOS.length];
-  var artEl = document.getElementById('pb-art');
-  if(artEl) artEl.innerHTML = '<img src="'+photo+'" alt="'+tr.title+'" style="width:100%;height:100%;object-fit:cover">';
-  var tracks = document.querySelectorAll('.track');
-  for(var i=0;i<tracks.length;i++) tracks[i].classList.toggle('playing', i===idx);
-}
-function togglePlay(){
-  aud = document.getElementById('aud');
-  if(curIdx<0){ loadTrack(0); return; }
-  if(isPlaying){ aud.pause(); isPlaying=false; }
-  else{ aud.play().catch(function(){}); isPlaying=true; }
-  updatePBIcon();
-}
-function prevTrack(){ loadTrack((curIdx-1+TRACKS.length)%TRACKS.length); }
-function nextTrack(){ loadTrack((curIdx+1)%TRACKS.length); }
-function setVol(v){ var a=document.getElementById('aud'); if(a) a.volume=v; }
-function seekTo(e){
-  var a=document.getElementById('aud');
-  if(!a||!a.duration) return;
-  var r=e.currentTarget.getBoundingClientRect();
-  a.currentTime=((e.clientX-r.left)/r.width)*a.duration;
-}
-function fmt(s){ var m=Math.floor(s/60),sc=Math.floor(s%60); return m+':'+(sc<10?'0':'')+sc; }
-function updatePBIcon(){
-  var ico=document.getElementById('pb-ico');
-  if(!ico) return;
-  ico.innerHTML=isPlaying
-    ?'<rect x="3" y="2" width="4" height="14" fill="#080808"/><rect x="11" y="2" width="4" height="14" fill="#080808"/>'
-    :'<path d="M4 2.5l11 6.5-11 6.5z"/>';
-}
-function setVizMode(n,btn){
-  vMode=n;
-  var btns=document.querySelectorAll('.vb');
-  for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');
-  btn.classList.add('on');
-}
-var vMode=0;
+  /* Build track list */
+  var tl = document.getElementById('tracklist');
+  for(var i=0; i<TRACKS.length; i++){
+    (function(idx){
+      var div = document.createElement('div');
+      div.className = 'track';
+      div.onclick = function(){ loadTrack(idx); };
+      var wbars = '';
+      for(var j=0; j<22; j++){
+        var h = Math.floor(Math.random()*20+4);
+        wbars += '<div class="tw" style="height:'+h+'px;--mn:'+Math.floor(h*0.3)+'px;--mx:'+h+'px;animation:hbounce '+(0.5+Math.random()*0.65).toFixed(2)+'s ease-in-out infinite alternate;animation-delay:'+(Math.random()*0.5).toFixed(2)+'s"></div>';
+      }
+      div.innerHTML = '<div class="tn">'+String(idx+1).padStart(2,'0')+'</div>'
+        +'<div class="tinfo"><div class="tplay"><svg width="11" height="11" viewBox="0 0 11 11" fill="#080808"><path d="M2 1l8 4.5-8 4.5z"/></svg></div>'
+        +'<div class="tmeta"><div class="tt">'+TRACKS[idx].title+'</div><div class="ta">Jeri Nova</div></div></div>'
+        +'<div class="twav">'+wbars+'</div><div class="tdur">—</div>';
+      tl.appendChild(div);
+    })(i);
+  }
 
-/* HERO CANVAS */
-(function(){
-  var c = document.getElementById('hero-canvas');
-  var ctx = c.getContext('2d');
-  var W, H, pts = [], t = 0;
-  function rsz(){ W = c.width = c.offsetWidth; H = c.height = c.offsetHeight; }
+  /* Release card waveforms */
+  for(var k=1; k<=6; k++){
+    var el = document.getElementById('rw'+k); if(!el) continue;
+    var isBlue = k%2===0;
+    for(var j=0; j<26; j++){
+      var b = document.createElement('div'); b.className='rw';
+      b.style.cssText = '--mn:'+Math.floor(Math.random()*3+2)+'px;--mx:'+Math.floor(Math.random()*32+6)+'px;--d:'+(Math.random()*0.75+0.42).toFixed(2)+'s;animation-delay:'+(Math.random()*0.55).toFixed(2)+'s;'+(isBlue?'background:rgba(29,160,242,.2)':'background:rgba(255,85,0,.2)');
+      el.appendChild(b);
+    }
+  }
+
+  /* Hero waveform */
+  var w = document.getElementById('hviz');
+  for(var i=0; i<72; i++){
+    var b = document.createElement('div'); b.className='hb';
+    b.style.cssText = '--mn:'+Math.floor(Math.random()*4+2)+'px;--mx:'+Math.floor(Math.random()*46+6)+'px;--d:'+(Math.random()*0.75+0.38).toFixed(2)+'s;animation-delay:'+(Math.random()*0.7).toFixed(2)+'s;'+(i%8===0?'background:var(--blu);opacity:.65':'');
+    w.appendChild(b);
+  }
+
+  /* Hero canvas */
+  var c = document.getElementById('hero-canvas'), ctx = c.getContext('2d');
+  var W, H, pts=[], t=0;
+  function rsz(){ W=c.width=c.offsetWidth; H=c.height=c.offsetHeight; }
   rsz(); window.addEventListener('resize', rsz);
-  for(var i=0;i<160;i++) pts.push({x:Math.random()*2000-1000,y:Math.random()*2000-1000,z:Math.random()*2000,sz:Math.random()*1.1+0.2,spd:Math.random()*0.35+0.1,isOrg:Math.random()>0.5});
-  function draw(){
+  for(var i=0; i<160; i++) pts.push({x:Math.random()*2000-1000,y:Math.random()*2000-1000,z:Math.random()*2000,sz:Math.random()*1.1+0.2,spd:Math.random()*0.35+0.1,isOrg:Math.random()>0.5});
+  (function draw(){
     ctx.clearRect(0,0,W,H); t+=0.003;
     var cx=W/2, cy=H/2;
-    for(var i=0;i<pts.length;i++){
+    for(var i=0; i<pts.length; i++){
       var p=pts[i]; p.z-=p.spd;
       if(p.z<=0){p.x=Math.random()*2000-1000;p.y=Math.random()*2000-1000;p.z=2000;}
       var px=(p.x/p.z)*480+cx, py=(p.y/p.z)*480+cy;
@@ -551,170 +526,95 @@ var vMode=0;
       ctx.fill();
     }
     requestAnimationFrame(draw);
-  }
-  draw();
-})();
+  })();
 
-/* HERO WAVEFORM */
-(function(){
-  var w = document.getElementById('hviz');
-  for(var i=0;i<72;i++){
-    var b = document.createElement('div'); b.className='hb';
-    var isB = i%8===0;
-    var mn = Math.floor(Math.random()*4+2);
-    var mx = Math.floor(Math.random()*46+6);
-    var d = (Math.random()*0.75+0.38).toFixed(2);
-    var dl = (Math.random()*0.7).toFixed(2);
-    b.style.cssText='--mn:'+mn+'px;--mx:'+mx+'px;--d:'+d+'s;animation-delay:'+dl+'s;'+(isB?'background:var(--blu);opacity:.65':'');
-    w.appendChild(b);
-  }
-})();
-
-/* RELEASE CARD WAVEFORMS */
-for(var k=1;k<=6;k++){
-  var el = document.getElementById('rw'+k); if(!el) continue;
-  var isB = k%2===0;
-  for(var j=0;j<26;j++){
-    var b = document.createElement('div'); b.className='rw';
-    var mn=Math.floor(Math.random()*3+2), mx=Math.floor(Math.random()*32+6);
-    var d=(Math.random()*0.75+0.42).toFixed(2), dl=(Math.random()*0.55).toFixed(2);
-    b.style.cssText='--mn:'+mn+'px;--mx:'+mx+'px;--d:'+d+'s;animation-delay:'+dl+'s;'+(isB?'background:rgba(29,160,242,.2)':'background:rgba(255,85,0,.2)');
-    el.appendChild(b);
-  }
-}
-
-/* BUILD TRACK LIST */
-var tl = document.getElementById('tracklist');
-for(var i=0;i<TRACKS.length;i++){
-  (function(idx){
-    var tr = TRACKS[idx];
-    var div = document.createElement('div');
-    div.className = 'track';
-    div.onclick = function(){ loadTrack(idx); };
-    var wbars = '';
-    for(var j=0;j<22;j++){
-      var h=Math.floor(Math.random()*20+4);
-      wbars+='<div class="tw" style="height:'+h+'px;--mn:'+Math.floor(h*0.3)+'px;--mx:'+h+'px;animation:hbounce '+(0.5+Math.random()*0.65).toFixed(2)+'s ease-in-out infinite alternate;animation-delay:'+(Math.random()*0.5).toFixed(2)+'s"></div>';
-    }
-    div.innerHTML='<div class="tn">'+String(idx+1).padStart(2,'0')+'</div>'
-      +'<div class="tinfo"><div class="tplay"><svg width="11" height="11" viewBox="0 0 11 11" fill="#080808"><path d="M2 1l8 4.5-8 4.5z"/></svg></div>'
-      +'<div class="tmeta"><div class="tt">'+tr.title+'</div><div class="ta">Jeri Nova</div></div></div>'
-      +'<div class="twav">'+wbars+'</div>'
-      +'<div class="tdur">—</div>';
-    tl.appendChild(div);
-  })(i);
-}
-
-/* AUDIO LISTENERS */
-(function(){
-  var a = document.getElementById('aud');
-  a.addEventListener('timeupdate', function(){
-    if(!a.duration) return;
-    var pct=(a.currentTime/a.duration)*100;
-    document.getElementById('pb-fill').style.width=pct+'%';
-    document.getElementById('pb-cur').textContent=fmt(a.currentTime);
-    document.getElementById('pb-dur').textContent=fmt(a.duration);
-    var rows=document.querySelectorAll('.track');
-    if(rows[curIdx]) rows[curIdx].querySelector('.tdur').textContent=fmt(a.duration);
-  });
-  a.addEventListener('ended', nextTrack);
-})();
-
-/* VISUALIZER */
-var vc = document.getElementById('vis-canvas');
-var vctx = vc.getContext('2d');
-var VW, VH, vMode=0, vt=0;
-function rszV(){
-  var r = vc.parentElement.getBoundingClientRect();
-  VW = vc.width = r.width; VH = vc.height = r.height;
-}
-rszV(); window.addEventListener('resize', rszV);
-
-var BINS=128, fk=new Float32Array(BINS), ap=0;
-function updFake(){
-  ap+=0.02;
-  for(var i=0;i<BINS;i++){
-    var f=i/BINS;
-    var bass=i<20?Math.pow(1-f*5,2)*0.88:0;
-    var mid=(i>=20&&i<70)?Math.sin(f*Math.PI*3)*0.5:0;
-    var hi=i>=70?(1-f)*0.32:0;
-    var wave=Math.sin(ap*2.1+i*0.19)*0.28+0.28;
-    var kick=Math.max(0,Math.sin(ap*3.9)*0.55)*(i<12?1:0);
-    fk[i]=Math.max(0,Math.min(1,bass+mid+hi+wave+kick+(Math.random()*0.055)));
-  }
-}
-var vparts=[];
-for(var i=0;i<110;i++) vparts.push({x:Math.random()*1400,y:Math.random()*700,vx:(Math.random()-0.5)*0.7,vy:(Math.random()-0.5)*0.7,r:Math.random()*2.2+0.4,life:Math.random(),isOrg:Math.random()>0.5});
-
-function drawSpectrum(){
-  var bw=VW/BINS;
-  for(var i=0;i<BINS;i++){
-    var h=fk[i]*VH*0.8,x=i*bw,isB=i%9===0;
-    vctx.fillStyle=isB?'rgba(29,160,242,'+(0.55+fk[i]*0.45)+')':'rgba(255,85,0,'+(0.58+fk[i]*0.42)+')';
-    vctx.fillRect(x,VH/2-h/2,bw-0.7,h);
-    vctx.fillStyle=isB?'rgba(29,160,242,.07)':'rgba(255,85,0,.07)';
-    vctx.fillRect(x,VH/2+h/2,bw-0.7,7);
-  }
-}
-function drawWaveform(){
-  var sets=[[('rgba(255,85,0,.85)'),2,1],[('rgba(29,160,242,.4)'),1,0.58]];
-  for(var s=0;s<sets.length;s++){
-    vctx.strokeStyle=sets[s][0]; vctx.lineWidth=sets[s][1];
-    vctx.shadowColor=sets[s][0]; vctx.shadowBlur=sets[s][1]===2?9:0;
-    vctx.beginPath();
+  /* Visualizer */
+  var vc=document.getElementById('vis-canvas'), vctx=vc.getContext('2d');
+  var VW, VH, vt=0;
+  function rszV(){ var r=vc.parentElement.getBoundingClientRect(); VW=vc.width=r.width; VH=vc.height=r.height; }
+  rszV(); window.addEventListener('resize', rszV);
+  var BINS=128, fk=new Float32Array(BINS), ap=0;
+  var vparts=[];
+  for(var i=0; i<110; i++) vparts.push({x:Math.random()*1400,y:Math.random()*700,vx:(Math.random()-0.5)*0.7,vy:(Math.random()-0.5)*0.7,r:Math.random()*2.2+0.4,life:Math.random(),isOrg:Math.random()>0.5});
+  function updFake(){
+    ap+=0.02;
     for(var i=0;i<BINS;i++){
-      var x=i/BINS*VW, y=VH/2+(fk[i]-0.5)*VH*sets[s][2];
-      i===0?vctx.moveTo(x,y):vctx.lineTo(x,y);
+      var f=i/BINS,bass=i<20?Math.pow(1-f*5,2)*0.88:0,mid=(i>=20&&i<70)?Math.sin(f*Math.PI*3)*0.5:0,hi=i>=70?(1-f)*0.32:0,wave=Math.sin(ap*2.1+i*0.19)*0.28+0.28,kick=Math.max(0,Math.sin(ap*3.9)*0.55)*(i<12?1:0);
+      fk[i]=Math.max(0,Math.min(1,bass+mid+hi+wave+kick+(Math.random()*0.055)));
     }
-    vctx.stroke();
   }
-  vctx.shadowBlur=0;
-}
-function drawRadial(){
-  var cx=VW/2,cy=VH/2,mR=Math.min(VW,VH)*0.38;
-  for(var i=0;i<BINS;i++){
-    var angle=i/BINS*Math.PI*2-Math.PI/2,amp=fk[i],r1=mR*0.28,r2=r1+amp*mR*0.72,isB=i%9===0;
-    vctx.strokeStyle=isB?'rgba(29,160,242,'+(0.55+amp*0.45)+')':'rgba(255,85,0,'+(0.58+amp*0.42)+')';
-    vctx.lineWidth=2; vctx.beginPath();
-    vctx.moveTo(cx+Math.cos(angle)*r1,cy+Math.sin(angle)*r1);
-    vctx.lineTo(cx+Math.cos(angle)*r2,cy+Math.sin(angle)*r2);
-    vctx.stroke();
+  function drawSpectrum(){
+    var bw=VW/BINS;
+    for(var i=0;i<BINS;i++){
+      var h=fk[i]*VH*0.8,x=i*bw,isB=i%9===0;
+      vctx.fillStyle=isB?'rgba(29,160,242,'+(0.55+fk[i]*0.45)+')':'rgba(255,85,0,'+(0.58+fk[i]*0.42)+')';
+      vctx.fillRect(x,VH/2-h/2,bw-0.7,h);
+      vctx.fillStyle=isB?'rgba(29,160,242,.07)':'rgba(255,85,0,.07)';
+      vctx.fillRect(x,VH/2+h/2,bw-0.7,7);
+    }
   }
-  var avg=0; for(var i=0;i<8;i++) avg+=fk[i]; avg/=8;
-  var g=vctx.createRadialGradient(cx,cy,0,cx,cy,mR*0.5*avg+10);
-  g.addColorStop(0,'rgba(255,85,0,'+(0.22*avg)+')'); g.addColorStop(1,'transparent');
-  vctx.fillStyle=g; vctx.beginPath(); vctx.arc(cx,cy,mR*0.5*avg+10,0,Math.PI*2); vctx.fill();
-}
-function drawOrbit(){
-  var avg=0; for(var i=0;i<24;i++) avg+=fk[i]; avg/=24;
-  for(var i=0;i<vparts.length;i++){
-    var p=vparts[i];
-    p.life+=0.004+avg*0.018;
-    if(p.life>1){p.life=0;p.x=Math.random()*VW;p.y=Math.random()*VH;}
-    p.x+=p.vx*(1+avg*2.4); p.y+=p.vy*(1+avg*2.4);
-    if(p.x<0||p.x>VW) p.vx*=-1; if(p.y<0||p.y>VH) p.vy*=-1;
-    var op=Math.sin(p.life*Math.PI)*0.8;
-    vctx.beginPath(); vctx.arc(p.x,p.y,p.r*(1+avg*1.7),0,Math.PI*2);
-    vctx.fillStyle=p.isOrg?'rgba(255,85,0,'+op+')':'rgba(29,160,242,'+(op*0.75)+')';
-    vctx.fill();
-    for(var j=0;j<vparts.length;j++){
-      var q=vparts[j];
-      var dx=p.x-q.x,dy=p.y-q.y,d=Math.sqrt(dx*dx+dy*dy);
-      if(d<85&&d>0){
-        vctx.strokeStyle=p.isOrg?'rgba(255,85,0,'+(( 1-d/85)*0.1)+')':'rgba(29,160,242,'+((1-d/85)*0.07)+')';
-        vctx.lineWidth=0.5; vctx.beginPath(); vctx.moveTo(p.x,p.y); vctx.lineTo(q.x,q.y); vctx.stroke();
+  function drawWaveform(){
+    var sets=[['rgba(255,85,0,.85)',2,1],['rgba(29,160,242,.4)',1,0.58]];
+    for(var s=0;s<sets.length;s++){
+      vctx.strokeStyle=sets[s][0];vctx.lineWidth=sets[s][1];vctx.shadowColor=sets[s][0];vctx.shadowBlur=sets[s][1]===2?9:0;
+      vctx.beginPath();
+      for(var i=0;i<BINS;i++){var x=i/BINS*VW,y=VH/2+(fk[i]-0.5)*VH*sets[s][2];i===0?vctx.moveTo(x,y):vctx.lineTo(x,y);}
+      vctx.stroke();
+    }
+    vctx.shadowBlur=0;
+  }
+  function drawRadial(){
+    var cx=VW/2,cy=VH/2,mR=Math.min(VW,VH)*0.38;
+    for(var i=0;i<BINS;i++){
+      var angle=i/BINS*Math.PI*2-Math.PI/2,amp=fk[i],r1=mR*0.28,r2=r1+amp*mR*0.72,isB=i%9===0;
+      vctx.strokeStyle=isB?'rgba(29,160,242,'+(0.55+amp*0.45)+')':'rgba(255,85,0,'+(0.58+amp*0.42)+')';
+      vctx.lineWidth=2;vctx.beginPath();
+      vctx.moveTo(cx+Math.cos(angle)*r1,cy+Math.sin(angle)*r1);
+      vctx.lineTo(cx+Math.cos(angle)*r2,cy+Math.sin(angle)*r2);
+      vctx.stroke();
+    }
+    var avg=0;for(var i=0;i<8;i++)avg+=fk[i];avg/=8;
+    var g=vctx.createRadialGradient(cx,cy,0,cx,cy,mR*0.5*avg+10);
+    g.addColorStop(0,'rgba(255,85,0,'+(0.22*avg)+')');g.addColorStop(1,'transparent');
+    vctx.fillStyle=g;vctx.beginPath();vctx.arc(cx,cy,mR*0.5*avg+10,0,Math.PI*2);vctx.fill();
+  }
+  function drawOrbit(){
+    var avg=0;for(var i=0;i<24;i++)avg+=fk[i];avg/=24;
+    for(var i=0;i<vparts.length;i++){
+      var p=vparts[i];
+      p.life+=0.004+avg*0.018;
+      if(p.life>1){p.life=0;p.x=Math.random()*VW;p.y=Math.random()*VH;}
+      p.x+=p.vx*(1+avg*2.4);p.y+=p.vy*(1+avg*2.4);
+      if(p.x<0||p.x>VW)p.vx*=-1;if(p.y<0||p.y>VH)p.vy*=-1;
+      var op=Math.sin(p.life*Math.PI)*0.8;
+      vctx.beginPath();vctx.arc(p.x,p.y,p.r*(1+avg*1.7),0,Math.PI*2);
+      vctx.fillStyle=p.isOrg?'rgba(255,85,0,'+op+')':'rgba(29,160,242,'+(op*0.75)+')';
+      vctx.fill();
+      for(var j=0;j<vparts.length;j++){
+        var q=vparts[j],dx=p.x-q.x,dy=p.y-q.y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<85&&d>0){vctx.strokeStyle=p.isOrg?'rgba(255,85,0,'+((1-d/85)*0.1)+')':'rgba(29,160,242,'+((1-d/85)*0.07)+')';vctx.lineWidth=0.5;vctx.beginPath();vctx.moveTo(p.x,p.y);vctx.lineTo(q.x,q.y);vctx.stroke();}
       }
     }
   }
-}
-(function vizLoop(){
-  updFake(); vt+=0.015; vctx.clearRect(0,0,VW,VH);
-  if(vMode===0) drawSpectrum();
-  else if(vMode===1) drawWaveform();
-  else if(vMode===2) drawRadial();
-  else drawOrbit();
-  requestAnimationFrame(vizLoop);
-})();
-/* CONTACT FORM */
-document.getElementById('contact-form').addEventListener('submit', function(e){
-  e.preventDefault()
+  (function vizLoop(){
+    updFake();vt+=0.015;vctx.clearRect(0,0,VW,VH);
+    if(vMode===0)drawSpectrum();
+    else if(vMode===1)drawWaveform();
+    else if(vMode===2)drawRadial();
+    else drawOrbit();
+    requestAnimationFrame(vizLoop);
+  })();
+
+  /* Contact form */
+  document.getElementById('contact-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn=this.querySelector('.fsub');
+    btn.textContent='Sent \u2713'; btn.style.background='var(--blu)';
+    var f=this;
+    setTimeout(function(){btn.textContent='Send Message';btn.style.background='var(--org)';f.reset();},3000);
+  });
+
+}); /* end DOMContentLoaded */
+</script>
+</body>
+</html>
