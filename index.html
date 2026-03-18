@@ -462,7 +462,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
 
 <audio id="aud" preload="none"></audio>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 var MUSIC_BASE = 'https://raw.githubusercontent.com/jerinovahub/music/main/';
 var TRACKS = [
   { title:'Amour',             file:'AMOUR%2000.mp3' },
@@ -473,6 +473,61 @@ var TRACKS = [
   { title:'Mr Guder',          file:'Mr%20guder%2000.mp3' }
 ];
 var PHOTOS = ['DSC00503-Enhanced-NR.jpg','DSC00504-Enhanced-NR.jpg','DSC00505-Enhanced-NR.jpg'];
+
+/* AUDIO ENGINE — defined early so onclick attributes can call loadTrack() */
+var aud = document.getElementById('aud');
+var curIdx = -1, isPlaying = false;
+
+function loadTrack(idx){
+  curIdx = idx;
+  var tr = TRACKS[idx];
+  aud = document.getElementById('aud');
+  aud.src = MUSIC_BASE + tr.file;
+  aud.volume = 0.85;
+  var volEl = document.getElementById('vol');
+  if(volEl) aud.volume = parseFloat(volEl.value);
+  aud.play().catch(function(){});
+  isPlaying = true;
+  updatePBIcon();
+  var titleEl = document.getElementById('pb-title');
+  if(titleEl) titleEl.textContent = tr.title;
+  var photo = PHOTOS[idx % PHOTOS.length];
+  var artEl = document.getElementById('pb-art');
+  if(artEl) artEl.innerHTML = '<img src="'+photo+'" alt="'+tr.title+'" style="width:100%;height:100%;object-fit:cover">';
+  var tracks = document.querySelectorAll('.track');
+  for(var i=0;i<tracks.length;i++) tracks[i].classList.toggle('playing', i===idx);
+}
+function togglePlay(){
+  aud = document.getElementById('aud');
+  if(curIdx<0){ loadTrack(0); return; }
+  if(isPlaying){ aud.pause(); isPlaying=false; }
+  else{ aud.play().catch(function(){}); isPlaying=true; }
+  updatePBIcon();
+}
+function prevTrack(){ loadTrack((curIdx-1+TRACKS.length)%TRACKS.length); }
+function nextTrack(){ loadTrack((curIdx+1)%TRACKS.length); }
+function setVol(v){ var a=document.getElementById('aud'); if(a) a.volume=v; }
+function seekTo(e){
+  var a=document.getElementById('aud');
+  if(!a||!a.duration) return;
+  var r=e.currentTarget.getBoundingClientRect();
+  a.currentTime=((e.clientX-r.left)/r.width)*a.duration;
+}
+function fmt(s){ var m=Math.floor(s/60),sc=Math.floor(s%60); return m+':'+(sc<10?'0':'')+sc; }
+function updatePBIcon(){
+  var ico=document.getElementById('pb-ico');
+  if(!ico) return;
+  ico.innerHTML=isPlaying
+    ?'<rect x="3" y="2" width="4" height="14" fill="#080808"/><rect x="11" y="2" width="4" height="14" fill="#080808"/>'
+    :'<path d="M4 2.5l11 6.5-11 6.5z"/>';
+}
+function setVizMode(n,btn){
+  vMode=n;
+  var btns=document.querySelectorAll('.vb');
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');
+  btn.classList.add('on');
+}
+var vMode=0;
 
 /* HERO CANVAS */
 (function(){
@@ -550,54 +605,20 @@ for(var i=0;i<TRACKS.length;i++){
   })(i);
 }
 
-/* AUDIO ENGINE */
-var aud = document.getElementById('aud');
-var curIdx = -1, isPlaying = false;
-
-function loadTrack(idx){
-  curIdx = idx;
-  var tr = TRACKS[idx];
-  aud.src = MUSIC_BASE + tr.file;
-  aud.volume = parseFloat(document.getElementById('vol').value);
-  aud.play().catch(function(){});
-  isPlaying = true;
-  updatePBIcon();
-  document.getElementById('pb-title').textContent = tr.title;
-  var photo = PHOTOS[idx % PHOTOS.length];
-  document.getElementById('pb-art').innerHTML = '<img src="'+photo+'" alt="'+tr.title+'" style="width:100%;height:100%;object-fit:cover">';
-  var tracks = document.querySelectorAll('.track');
-  for(var i=0;i<tracks.length;i++) tracks[i].classList.toggle('playing', i===idx);
-}
-function togglePlay(){
-  if(curIdx<0){ loadTrack(0); return; }
-  if(isPlaying){ aud.pause(); isPlaying=false; }
-  else{ aud.play().catch(function(){}); isPlaying=true; }
-  updatePBIcon();
-}
-function prevTrack(){ loadTrack((curIdx-1+TRACKS.length)%TRACKS.length); }
-function nextTrack(){ loadTrack((curIdx+1)%TRACKS.length); }
-function setVol(v){ aud.volume = v; }
-function seekTo(e){
-  if(!aud.duration) return;
-  var r = e.currentTarget.getBoundingClientRect();
-  aud.currentTime = ((e.clientX-r.left)/r.width)*aud.duration;
-}
-function fmt(s){ var m=Math.floor(s/60),sc=Math.floor(s%60); return m+':'+(sc<10?'0':'')+sc; }
-function updatePBIcon(){
-  document.getElementById('pb-ico').innerHTML = isPlaying
-    ? '<rect x="3" y="2" width="4" height="14" fill="#080808"/><rect x="11" y="2" width="4" height="14" fill="#080808"/>'
-    : '<path d="M4 2.5l11 6.5-11 6.5z"/>';
-}
-aud.addEventListener('timeupdate', function(){
-  if(!aud.duration) return;
-  var pct = (aud.currentTime/aud.duration)*100;
-  document.getElementById('pb-fill').style.width = pct+'%';
-  document.getElementById('pb-cur').textContent = fmt(aud.currentTime);
-  document.getElementById('pb-dur').textContent = fmt(aud.duration);
-  var rows = document.querySelectorAll('.track');
-  if(rows[curIdx]) rows[curIdx].querySelector('.tdur').textContent = fmt(aud.duration);
-});
-aud.addEventListener('ended', nextTrack);
+/* AUDIO LISTENERS */
+(function(){
+  var a = document.getElementById('aud');
+  a.addEventListener('timeupdate', function(){
+    if(!a.duration) return;
+    var pct=(a.currentTime/a.duration)*100;
+    document.getElementById('pb-fill').style.width=pct+'%';
+    document.getElementById('pb-cur').textContent=fmt(a.currentTime);
+    document.getElementById('pb-dur').textContent=fmt(a.duration);
+    var rows=document.querySelectorAll('.track');
+    if(rows[curIdx]) rows[curIdx].querySelector('.tdur').textContent=fmt(a.duration);
+  });
+  a.addEventListener('ended', nextTrack);
+})();
 
 /* VISUALIZER */
 var vc = document.getElementById('vis-canvas');
@@ -694,13 +715,6 @@ function drawOrbit(){
   else drawOrbit();
   requestAnimationFrame(vizLoop);
 })();
-function setVizMode(n,btn){
-  vMode=n;
-  var btns=document.querySelectorAll('.vb');
-  for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');
-  btn.classList.add('on');
-}
-
 /* CONTACT FORM */
 document.getElementById('contact-form').addEventListener('submit', function(e){
   e.preventDefault()
