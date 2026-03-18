@@ -322,8 +322,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
 .flogo em{color:var(--org);font-style:normal}
 
 /* ── REVEAL ── */
-.rev{opacity:0;transform:translateY(22px);transition:opacity .72s ease,transform .72s ease}
-.rev.on{opacity:1;transform:translateY(0)}
+.rev{opacity:1;transform:translateY(0)}
 
 /* ── RESPONSIVE ── */
 @media(max-width:860px){
@@ -843,11 +842,7 @@ function drawOrbit(){
 })();
 function setVizMode(n,btn){vMode=n;document.querySelectorAll('.vb').forEach(b=>b.classList.remove('on'));btn.classList.add('on')}
 
-/* ── SCROLL REVEAL ── */
-const io=new IntersectionObserver(entries=>{
-  entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('on'),i*55);io.unobserve(e.target)}});
-},{threshold:.1});
-document.querySelectorAll('.rev').forEach(el=>io.observe(el));
+
 
 /* ── CONTACT FORM ── */
 functi
