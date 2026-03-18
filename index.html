@@ -114,13 +114,7 @@ nav{
 /* ── 01 MUSIC ── */
 #music{background:var(--blk2);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding:6.5rem 0}
 
-/* SoundCloud embed */
-.sc-wrap{
-  background:var(--blk3);border:1px solid var(--bdro);
-  padding:.5rem;margin-bottom:2.4rem;position:relative;overflow:hidden;
-}
-.sc-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--org),var(--blu),transparent)}
-.sc-wrap iframe{width:100%;border:none;display:block}
+
 
 /* track list */
 .tracklist{display:flex;flex-direction:column;gap:2px}
@@ -398,14 +392,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
     <div class="rev">
       <span class="sec-num">01 — Music</span>
       <h2 class="sec-h">The <span>Playlist</span></h2>
-      <p class="sec-sub">Stream on SoundCloud or play tracks below — hosted at github.com/jerinovahub/music</p>
-    </div>
-
-    <!-- SoundCloud embed -->
-    <div class="sc-wrap rev" style="margin-top:2rem">
-      <iframe height="166" scrolling="no" allow="autoplay"
-        src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/jeri-nova&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true">
-      </iframe>
+      <p class="sec-sub">Select any track to play. All music hosted at github.com/jerinovahub/music</p>
     </div>
 
     <!-- GitHub-hosted track list -->
@@ -534,7 +521,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
         <p>Every live set is an immersive experience where visuals and sound collapse into a single unified force — leaving audiences suspended between rhythm and reverie. Whether it's a sweaty club basement or an open desert stage, Jeri Nova brings the frequency.</p>
         <p>
           Follow on Instagram: <a href="https://www.instagram.com/jeri_nova" target="_blank">@jeri_nova</a><br>
-          Email: <a href="mailto:jerinova@gmail.com">jerinova@gmail.com</a>
+          Email: <a href="/cdn-cgi/l/email-protection#563c33243f3839203716313b373f3a7835393b"><span class="__cf_email__" data-cfemail="e8828d9a8186879e89a88f85898184c68b8785">[email&#160;protected]</span></a>
         </p>
         <div class="stats">
           <div class="stat"><span class="sn">8+</span><span class="sl">Years</span></div>
@@ -574,7 +561,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
         <h2>Let's Make<br><em>Noise</em> Together</h2>
         <p>Available for bookings, festival slots, collaborations, licensing, and press. Reach out via email or Instagram.</p>
         <div class="clinks">
-          <a href="mailto:jerinova@gmail.com" class="clink">
+          <a href="/cdn-cgi/l/email-protection#f19b9483989f9e8790b1969c90989ddf929e9c" class="clink">
             <div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg></div>
             <div><span class="clink-lbl">Email</span><span class="clink-val"><em>jerinova</em>@gmail.com</span></div>
           </a>
@@ -653,7 +640,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
 
 <audio id="aud" preload="none"></audio>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ============================================================
    TRACK DATA — exact filenames from github.com/jerinovahub/music
    raw URL format encodes spaces as %20
@@ -886,11 +873,4 @@ const io=new IntersectionObserver(entries=>{
 document.querySelectorAll('.rev').forEach(el=>io.observe(el));
 
 /* ── CONTACT FORM ── */
-function handleForm(e){
-  e.preventDefault();const btn=e.target.querySelector('.fsub');
-  btn.textContent='Sent ✓';btn.style.background='var(--blu)';
-  setTimeout(()=>{btn.textContent='Send Message';btn.style.background='var(--org)';e.target.reset()},3000);
-}
-</script>
-</body>
-</html>
+functi
