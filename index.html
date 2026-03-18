@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JERI NOVA — Electronic Artist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   REAL URLS
+   Photos: raw.githubusercontent.com/jerinovahub/jerinovawebsite/main/
+   Music:  raw.githubusercontent.com/jerinovahub/music/main/
+   Palette: black / orange #ff5500 / blue #1da0f2
+   References: SoundCloud 60% · CloudKid 20% · SolidDark 20%
+============================================================ */
+:root{
+  --blk:  #080808;
+  --blk2: #101010;
+  --blk3: #181818;
+  --blk4: #222222;
+  --org:  #ff5500;
+  --org2: #ff7a2f;
+  --org3: rgba(255,85,0,.12);
+  --blu:  #1da0f2;
+  --blu2: rgba(29,160,242,.10);
+  --wht:  #f0f0f0;
+  --gry:  #888;
+  --gry2: #444;
+  --bdr:  rgba(255,255,255,.07);
+  --bdro: rgba(255,85,0,.22);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--blk);color:var(--wht);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;cursor:none}
+
+/* ── cursor ── */
+#cur,#cur2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:exclusion;transform:translate(-50%,-50%)}
+#cur{width:8px;height:8px;background:var(--org)}
+#cur2{width:34px;height:34px;border:1px solid var(--org);opacity:.45;transition:transform .18s ease,opacity .2s,border-color .2s}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:600;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 3rem;height:58px;
+  background:rgba(8,8,8,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--bdr);
+}
+.logo{font-family:'Anton',sans-serif;font-size:1.3rem;letter-spacing:.14em;color:var(--wht);text-decoration:none}
+.logo em{color:var(--org);font-style:normal}
+.nav-links{display:flex;gap:2.2rem;list-style:none}
+.nav-links a{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.16em;color:var(--gry);text-decoration:none;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--org)}
+.nav-cta{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.12em;padding:.46rem 1.2rem;border:1px solid var(--org);color:var(--org);text-decoration:none;text-transform:uppercase;transition:background .2s,color .2s}
+.nav-cta:hover{background:var(--org);color:var(--blk)}
+
+/* ── HERO ── */
+#hero{
+  position:relative;min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;overflow:hidden;padding-top:58px;
+}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+
+/* hero BG photo — DSC00519 fills the full hero behind canvas */
+.hero-photo-bg{
+  position:absolute;inset:0;z-index:0;
+  background:url('https://raw.githubusercontent.com/jerinovahub/jerinovawebsite/main/DSC00519-Enhanced-NR.jpg') center center/cover no-repeat;
+}
+.hero-photo-bg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(8,8,8,.72) 0%,rgba(8,8,8,.55) 40%,rgba(8,8,8,.88) 100%);
+}
+
+.hero-inner{position:relative;z-index:2;padding:2rem}
+.hero-kicker{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.32em;color:var(--org);text-transform:uppercase;margin-bottom:1.3rem;opacity:0;animation:fadeup .9s .3s forwards}
+.hero-name{
+  font-family:'Anton',sans-serif;
+  font-size:clamp(5rem,15vw,12rem);
+  line-height:.88;letter-spacing:.03em;
+  color:var(--wht);
+  opacity:0;animation:fadeup .9s .5s forwards;
+}
+.hero-name em{color:var(--org);font-style:normal;display:block}
+.hero-tag{font-family:'Space Mono',monospace;font-size:clamp(.65rem,1.4vw,.85rem);letter-spacing:.38em;color:var(--gry);text-transform:uppercase;margin-top:.5rem;margin-bottom:2.5rem;opacity:0;animation:fadeup .9s .7s forwards}
+
+/* SoundCloud-style waveform */
+#hviz{width:min(580px,88vw);height:56px;display:flex;align-items:flex-end;justify-content:center;gap:2px;margin:0 auto 2.5rem;opacity:0;animation:fadein 1s 1.4s forwards}
+.hb{flex:1;max-width:6px;border-radius:2px 2px 0 0;background:var(--org);opacity:.8;animation:hbounce var(--d,1s) ease-in-out infinite alternate}
+@keyframes hbounce{from{height:var(--mn,3px)}to{height:var(--mx,44px)}}
+
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeup .9s .95s forwards}
+.btn-o{font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.1em;padding:.82rem 2rem;background:var(--org);color:var(--blk);text-decoration:none;text-transform:uppercase;font-weight:700;border:2px solid var(--org);transition:background .2s,color .2s,transform .15s}
+.btn-o:hover{background:transparent;color:var(--org);transform:translateY(-2px)}
+.btn-b{font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.1em;padding:.82rem 2rem;background:transparent;color:var(--blu);text-decoration:none;text-transform:uppercase;border:2px solid var(--blu);transition:background .2s,color .2s,transform .15s}
+.btn-b:hover{background:var(--blu);color:var(--blk);transform:translateY(-2px)}
+
+.scroll-cue{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;opacity:0;animation:fadein 1s 2s forwards}
+.scroll-cue span{font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.22em;color:var(--gry);text-transform:uppercase}
+.scroll-line{width:1px;height:38px;background:linear-gradient(to bottom,var(--org),transparent);animation:scpulse 2s ease-in-out infinite}
+@keyframes scpulse{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes fadeup{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+
+/* ── SHARED ── */
+.wrap{max-width:1180px;margin:0 auto;padding:0 3rem}
+.sec-num{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.28em;color:var(--org);text-transform:uppercase;display:block;margin-bottom:.65rem}
+.sec-h{font-family:'Anton',sans-serif;font-size:clamp(2rem,4.5vw,3.5rem);letter-spacing:.04em;line-height:1;margin-bottom:.8rem}
+.sec-h span{color:var(--org)}
+.sec-sub{font-size:.92rem;color:var(--gry);line-height:1.75;max-width:520px}
+
+/* ── 01 MUSIC ── */
+#music{background:var(--blk2);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding:6.5rem 0}
+
+/* SoundCloud embed */
+.sc-wrap{
+  background:var(--blk3);border:1px solid var(--bdro);
+  padding:.5rem;margin-bottom:2.4rem;position:relative;overflow:hidden;
+}
+.sc-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--org),var(--blu),transparent)}
+.sc-wrap iframe{width:100%;border:none;display:block}
+
+/* track list */
+.tracklist{display:flex;flex-direction:column;gap:2px}
+.track{
+  display:grid;grid-template-columns:40px 1fr 140px 58px;
+  align-items:center;gap:1rem;
+  padding:.8rem 1.1rem;background:var(--blk3);
+  border:1px solid transparent;
+  transition:background .18s,border-color .18s;cursor:none;
+}
+.track:hover,.track.playing{background:var(--blk4);border-color:var(--bdro)}
+.track.playing .tn,.track.playing .tt{color:var(--org)}
+.tn{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--gry2);text-align:center}
+.tinfo{display:flex;align-items:center;gap:.8rem;min-width:0}
+.tplay{
+  width:30px;height:30px;border-radius:50%;background:var(--org);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:transform .15s;
+}
+.track:hover .tplay,.track.playing .tplay{transform:scale(1.1)}
+.tmeta{min-width:0}
+.tt{font-size:.88rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ta{font-size:.72rem;color:var(--gry);margin-top:.1rem}
+
+/* mini waveform per track */
+.twav{height:28px;display:flex;align-items:center;gap:1px;overflow:hidden;opacity:.4;transition:opacity .2s}
+.track:hover .twav,.track.playing .twav{opacity:1}
+.tw{width:2px;border-radius:1px;background:var(--org)}
+.track.playing .tw{background:var(--org)}
+
+.tdur{font-family:'Space Mono',monospace;font-size:.63rem;color:var(--gry2);text-align:right}
+
+/* ── fixed player bar ── */
+#pbar{
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  height:68px;background:var(--blk2);border-top:1px solid var(--bdro);
+  display:flex;align-items:center;gap:1.2rem;padding:0 1.8rem;
+}
+.pb-art{
+  width:42px;height:42px;flex-shrink:0;overflow:hidden;
+  border:1px solid var(--bdro);background:var(--blk3);
+}
+.pb-art img{width:100%;height:100%;object-fit:cover;display:block}
+.pb-nowplay{min-width:0;width:170px;flex-shrink:0}
+.pb-title{font-size:.8rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pb-artist{font-size:.7rem;color:var(--gry);margin-top:.1rem}
+.pb-ctrl{display:flex;align-items:center;gap:.8rem;flex-shrink:0}
+.pb-btn{width:32px;height:32px;border:none;background:none;color:var(--gry);cursor:none;display:flex;align-items:center;justify-content:center;transition:color .2s}
+.pb-btn:hover{color:var(--wht)}
+.pb-playbtn{width:40px;height:40px;border-radius:50%;background:var(--org);border:none;cursor:none;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.pb-playbtn:hover{transform:scale(1.08)}
+.pb-prog{flex:1;display:flex;flex-direction:column;gap:.42rem}
+.pb-track-wrap{width:100%;height:4px;background:var(--blk4);cursor:none;border-radius:2px;position:relative}
+.pb-track-fill{height:100%;background:var(--org);border-radius:2px;width:0%;transition:width .4s linear}
+.pb-times{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--gry2)}
+.pb-vol{display:flex;align-items:center;gap:.5rem;width:90px;flex-shrink:0}
+.pb-vol svg{flex-shrink:0;color:var(--gry)}
+.pb-vol input{flex:1;accent-color:var(--org);cursor:none}
+
+/* ── 02 VISUALS ── */
+#visuals{padding:0;background:var(--blk)}
+.vis-stage{height:80vh;min-height:480px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#vis-canvas{position:absolute;inset:0;width:100%;height:100%}
+.vis-ui{position:relative;z-index:2;text-align:center;padding:2rem}
+.vis-ui h2{font-family:'Anton',sans-serif;font-size:clamp(2.8rem,7vw,6.5rem);letter-spacing:.05em;color:var(--wht)}
+.vis-ui h2 em{color:var(--org);font-style:normal;display:block}
+.vis-btns{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1.4rem}
+.vb{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.12em;padding:.38rem .9rem;border:1px solid var(--bdr);color:var(--gry);background:rgba(8,8,8,.75);text-transform:uppercase;cursor:none;transition:border-color .2s,color .2s}
+.vb.on,.vb:hover{border-color:var(--org);color:var(--org)}
+
+/* ── 03 GALLERY — real photos ── */
+#gallery{background:var(--blk);padding:6.5rem 0}
+.gallery-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  grid-template-rows:auto auto;
+  gap:3px;margin-top:2.5rem;
+}
+.gitem{overflow:hidden;position:relative;cursor:none;background:var(--blk3)}
+.gitem:first-child{grid-row:span 2}
+.gitem img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .5s ease,filter .4s;
+  filter:brightness(.9) saturate(.85);
+}
+.gitem:hover img{transform:scale(1.04);filter:brightness(1) saturate(1)}
+.gitem-cap{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:1.2rem 1rem .9rem;
+  background:linear-gradient(to top,rgba(8,8,8,.88),transparent);
+  opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s;
+}
+.gitem:hover .gitem-cap{opacity:1;transform:translateY(0)}
+.gitem-cap p{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.12em;color:var(--org);text-transform:uppercase}
+
+/* ── 04 RELEASES ── */
+#releases{background:var(--blk2);border-top:1px solid var(--bdr);padding:6.5rem 0}
+.rel-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:1px;background:var(--bdr);border:1px solid var(--bdr);margin-top:2.5rem;
+}
+.rcard{background:var(--blk);overflow:hidden;cursor:none;transition:background .2s}
+.rcard:hover{background:var(--blk3)}
+.rcard-art{width:100%;aspect-ratio:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.ra1{background:linear-gradient(135deg,#080800 0%,#1f0a00 45%,#ff5500 100%)}
+.ra2{background:linear-gradient(225deg,#000a14 0%,#001c34 50%,#1da0f2 100%)}
+.ra3{background:linear-gradient(45deg,#090000 0%,#280600 55%,#ff3300 100%)}
+.ra4{background:linear-gradient(315deg,#000810 0%,#001c3a 60%,#0d6aad 100%)}
+.ra5{background:linear-gradient(160deg,#160400 0%,#ff5500 60%,#ff9900 100%)}
+.ra6{background:linear-gradient(200deg,#001020 0%,#1da0f2 55%,#0a2436 100%)}
+.rcard-wav{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2px;padding:0 1rem}
+.rw{width:3px;border-radius:2px;background:rgba(255,255,255,.18);animation:rcwb var(--d,.9s) ease-in-out infinite alternate}
+@keyframes rcwb{from{height:var(--mn,4px)}to{height:var(--mx,36px)}}
+.rcard-over{position:absolute;inset:0;background:rgba(255,85,0,.07);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .25s}
+.rcard:hover .rcard-over{opacity:1}
+.rplay{width:52px;height:52px;border-radius:50%;background:var(--org);display:flex;align-items:center;justify-content:center;transform:scale(.8);transition:transform .25s;box-shadow:0 0 24px rgba(255,85,0,.45)}
+.rcard:hover .rplay{transform:scale(1)}
+.rcard-info{padding:1rem 1.1rem 1.3rem}
+.rtitle{font-size:.88rem;font-weight:600;margin-bottom:.2rem}
+.rmeta{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--gry);letter-spacing:.07em}
+.rtag{display:inline-block;margin-top:.5rem;padding:.15rem .55rem;font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--bdr);color:var(--gry)}
+.rtag.o{border-color:var(--bdro);color:var(--org)}
+.rtag.b{border-color:rgba(29,160,242,.28);color:var(--blu)}
+
+/* ── 05 ABOUT ── */
+#about{background:var(--blk);border-top:1px solid var(--bdr);padding:6.5rem 0}
+.about-grid{display:grid;grid-template-columns:1fr 1.25fr;gap:5.5rem;align-items:center}
+.about-photo-wrap{position:relative}
+.about-photo{
+  width:100%;aspect-ratio:3/4;overflow:hidden;
+  border:1px solid var(--bdr);position:relative;
+}
+.about-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.92) saturate(.88);transition:filter .4s}
+.about-photo:hover img{filter:brightness(1) saturate(1)}
+/* orange accent bar on left */
+.about-photo::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--org);z-index:1}
+.photo-label{position:absolute;bottom:0;left:0;right:0;padding:1.4rem;background:linear-gradient(to top,rgba(8,8,8,.95),transparent)}
+.photo-label p{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.2em;color:var(--org);text-transform:uppercase;margin-bottom:.3rem}
+.photo-label h3{font-family:'Anton',sans-serif;font-size:1.7rem;letter-spacing:.08em;color:var(--wht)}
+.about-deco{position:absolute;top:-10px;right:-10px;width:64px;height:64px;border:1px solid var(--bdro)}
+
+.about-copy .sec-h{margin-bottom:1.3rem}
+.about-copy p{font-size:.96rem;color:var(--gry);line-height:1.88;margin-bottom:1.1rem}
+.about-copy p strong{color:var(--wht);font-weight:500}
+.about-copy a{color:var(--org);text-decoration:none}
+.about-copy a:hover{text-decoration:underline}
+
+/* SoundCloud-style stats */
+.stats{display:flex;border:1px solid var(--bdr);margin-top:2.3rem}
+.stat{flex:1;padding:1.1rem .8rem;border-right:1px solid var(--bdr);text-align:center}
+.stat:last-child{border-right:none}
+.sn{font-family:'Anton',sans-serif;font-size:1.9rem;color:var(--org);line-height:1;display:block}
+.sl{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.12em;color:var(--gry);text-transform:uppercase;margin-top:.25rem;display:block}
+
+/* ── 06 EVENTS ── */
+#events{background:var(--blk2);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding:6.5rem 0}
+.erow{
+  display:grid;grid-template-columns:68px 1fr auto;
+  align-items:center;gap:2rem;padding:1.5rem 0;
+  border-bottom:1px solid var(--bdr);position:relative;
+  transition:padding-left .22s,background .2s;cursor:none;
+}
+.erow::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--org);transition:width .22s}
+.erow:hover{padding-left:1.1rem;background:rgba(255,85,0,.03)}
+.erow:hover::before{width:3px}
+.ed .dy{font-family:'Anton',sans-serif;font-size:2.3rem;color:var(--org);line-height:1}
+.ed .mo{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.14em;color:var(--gry);text-transform:uppercase}
+.ei h3{font-family:'Anton',sans-serif;font-size:1.15rem;letter-spacing:.04em;margin-bottom:.22rem}
+.ei p{font-family:'Space Mono',monospace;font-size:.63rem;color:var(--gry);letter-spacing:.1em}
+.epill{padding:.28rem .85rem;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--bdro);color:var(--org);white-space:nowrap}
+.epill.sold{border-color:var(--gry2);color:var(--gry2)}
+
+/* ── 07 CONTACT ── */
+#contact{background:var(--blk);padding:6.5rem 0}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+.contact-l h2{font-family:'Anton',sans-serif;font-size:clamp(2.4rem,5.5vw,4rem);letter-spacing:.04em;line-height:1.05;margin-bottom:.9rem}
+.contact-l h2 em{color:var(--org);font-style:normal}
+.contact-l p{font-size:.95rem;color:var(--gry);line-height:1.82;margin-bottom:2rem}
+.clinks{display:flex;flex-direction:column;gap:.6rem;margin-bottom:2.5rem}
+.clink{
+  display:flex;align-items:center;gap:.9rem;
+  padding:.82rem 1.1rem;background:var(--blk3);
+  border:1px solid var(--bdr);text-decoration:none;color:var(--wht);
+  transition:border-color .2s,background .2s;
+}
+.clink:hover{border-color:var(--bdro);background:var(--blk4)}
+.clink-ico{width:34px;height:34px;background:var(--org3);border:1px solid var(--bdro);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.clink-lbl{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.15em;color:var(--gry);text-transform:uppercase;display:block;margin-bottom:.12rem}
+.clink-val{font-size:.88rem;font-weight:500}
+.clink-val em{color:var(--org);font-style:normal}
+
+/* form */
+.fg{margin-bottom:.9rem}
+.fg label{display:block;font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.14em;color:var(--gry);text-transform:uppercase;margin-bottom:.42rem}
+.fg input,.fg textarea,.fg select{width:100%;background:var(--blk3);border:1px solid var(--bdr);border-bottom:1px solid var(--gry2);color:var(--wht);font-family:'Inter',sans-serif;font-size:.93rem;padding:.72rem 1rem;outline:none;border-radius:0;appearance:none;transition:border-color .2s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--org)}
+.fg textarea{min-height:108px;resize:vertical}
+.fg select option{background:var(--blk3)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.fsub{width:100%;padding:.88rem;background:var(--org);color:var(--blk);border:none;font-family:'Anton',sans-serif;font-size:1.05rem;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:background .2s,transform .15s}
+.fsub:hover{background:var(--org2);transform:translateY(-2px)}
+
+/* ── FOOTER ── */
+footer{background:var(--blk);border-top:1px solid var(--bdr);padding:1.8rem 3rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:68px}
+footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em;color:var(--gry2);text-transform:uppercase}
+.flogo{font-family:'Anton',sans-serif;font-size:1rem;letter-spacing:.14em;color:var(--gry2)}
+.flogo em{color:var(--org);font-style:normal}
+
+/* ── REVEAL ── */
+.rev{opacity:0;transform:translateY(22px);transition:opacity .72s ease,transform .72s ease}
+.rev.on{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:860px){
+  nav{padding:0 1.2rem}
+  .nav-links{display:none}
+  .wrap{padding:0 1.3rem}
+  #music,#gallery,#releases,#about,#events,#contact{padding:4.5rem 0}
+  .about-grid,.contact-grid{grid-template-columns:1fr;gap:2.8rem}
+  .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+  .gitem:first-child{grid-row:span 1}
+  .frow{grid-template-columns:1fr}
+  .erow{grid-template-columns:54px 1fr}
+  .epill{display:none}
+  footer{padding:1.4rem;margin-bottom:68px}
+  #pbar{gap:.7rem;padding:0 1rem}
+  .pb-nowplay{width:120px}
+  .pb-vol{display:none}
+  .track{grid-template-columns:34px 1fr 48px}
+  .twav{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur2"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#" class="logo">JERI<em>.</em>NOVA</a>
+  <ul class="nav-links">
+    <li><a href="#music">Music</a></li>
+    <li><a href="#visuals">Visuals</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#events">Events</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Book Now</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-photo-bg"></div>
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-inner">
+    <span class="hero-kicker">— Electronic Music Artist &amp; DJ —</span>
+    <h1 class="hero-name">JERI<em>NOVA</em></h1>
+    <p class="hero-tag">Las Vegas &nbsp;·&nbsp; Techno &nbsp;·&nbsp; Ambient &nbsp;·&nbsp; Electronic</p>
+    <div id="hviz"></div>
+    <div class="hero-btns">
+      <a href="#music" class="btn-o">Listen Now</a>
+      <a href="#events" class="btn-b">Upcoming Shows</a>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ── 01 MUSIC ── -->
+<section id="music">
+  <div class="wrap">
+    <div class="rev">
+      <span class="sec-num">01 — Music</span>
+      <h2 class="sec-h">The <span>Playlist</span></h2>
+      <p class="sec-sub">Stream on SoundCloud or play tracks below — hosted at github.com/jerinovahub/music</p>
+    </div>
+
+    <!-- SoundCloud embed -->
+    <div class="sc-wrap rev" style="margin-top:2rem">
+      <iframe height="166" scrolling="no" allow="autoplay"
+        src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/jeri-nova&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true">
+      </iframe>
+    </div>
+
+    <!-- GitHub-hosted track list -->
+    <div class="tracklist rev" id="tracklist"></div>
+  </div>
+</section>
+
+<!-- ── 02 VISUALS ── -->
+<section id="visuals">
+  <div class="vis-stage">
+    <canvas id="vis-canvas"></canvas>
+    <div class="vis-ui">
+      <span class="sec-num rev">02 — Interactive Visuals</span>
+      <h2 class="rev">SOUND<em>IN MOTION</em></h2>
+      <div class="vis-btns rev">
+        <button class="vb on" onclick="setVizMode(0,this)">Spectrum</button>
+        <button class="vb" onclick="setVizMode(1,this)">Waveform</button>
+        <button class="vb" onclick="setVizMode(2,this)">Radial</button>
+        <button class="vb" onclick="setVizMode(3,this)">Orbit</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 GALLERY — real photos ── -->
+<section id="gallery">
+  <div class="wrap">
+    <div class="rev">
+      <span class="sec-num">03 — Gallery</span>
+      <h2 class="sec-h"><span>Photos</span></h2>
+    </div>
+  </div>
+  <div class="wrap" style="padding-top:0">
+    <div class="gallery-grid rev">
+
+      <!-- large left: DSC00503 -->
+      <div class="gitem" style="min-height:400px">
+        <img src="https://raw.githubusercontent.com/jerinovahub/jerinovawebsite/main/DSC00503-Enhanced-NR.jpg" alt="Jeri Nova" loading="lazy">
+        <div class="gitem-cap"><p>Jeri Nova — Live</p></div>
+      </div>
+
+      <!-- top right: DSC00504 -->
+      <div class="gitem" style="min-height:196px">
+        <img src="https://raw.githubusercontent.com/jerinovahub/jerinovawebsite/main/DSC00504-Enhanced-NR.jpg" alt="Jeri Nova" loading="lazy">
+        <div class="gitem-cap"><p>Studio Session</p></div>
+      </div>
+
+      <!-- bottom right top: DSC00505 -->
+      <div class="gitem" style="min-height:196px">
+        <img src="https://raw.githubusercontent.com/jerinovahub/jerinovawebsite/main/DSC00505-Enhanced-NR.jpg" alt="Jeri Nova" loading="lazy">
+        <div class="gitem-cap"><p>Jeri Nova</p></div>
+      </div>
+
+      <!-- bottom row: DSC00515 -->
+      <div class="gitem" style="min-height:220px">
+        <img src="https://raw.githubusercontent.com/jerinovahub/jerinovawebsite/main/DSC00515-Enhanced-NR.jpg" alt="Jeri Nova" loading="lazy">
+        <div class="gitem-cap"><p>On Stage</p></div>
+      </div>
+
+      <!-- bottom row: DSC00519 (also used in hero bg) -->
+      <div class="gitem" style="min-height:220px">
+        <img src="https://raw.githubusercontent.com/jerinovahub/jerinovawebsite/main/DSC00519-Enhanced-NR.jpg" alt="Jeri Nova" loading="lazy">
+        <div class="gitem-cap"><p>Las Vegas, NV</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 RELEASES ── -->
+<section id="releases">
+  <div class="wrap">
+    <div class="rev">
+      <span class="sec-num">04 — Releases</span>
+      <h2 class="sec-h">Latest <span>Drops</span></h2>
+    </div>
+    <div class="rel-grid rev">
+      <div class="rcard">
+        <div class="rcard-art ra1"><div class="rcard-wav" id="rw1"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div>
+        <div class="rcard-info"><p class="rtitle">Amour</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">Electronic</span></div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-art ra2"><div class="rcard-wav" id="rw2"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div>
+        <div class="rcard-info"><p class="rtitle">Colours Mn Edit</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Ambient</span></div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-art ra3"><div class="rcard-wav" id="rw3"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div>
+        <div class="rcard-info"><p class="rtitle">Fat Diamond Drift</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">Techno</span></div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-art ra4"><div class="rcard-wav" id="rw4"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div>
+        <div class="rcard-info"><p class="rtitle">Krispy Wallace</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-art ra5"><div class="rcard-wav" id="rw5"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div>
+        <div class="rcard-info"><p class="rtitle">Love How U Want</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-art ra6"><div class="rcard-wav" id="rw6"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div>
+        <div class="rcard-info"><p class="rtitle">Mr Guder</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Ambient</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 ABOUT ── -->
+<section id="about">
+  <div class="wrap">
+    <div class="about-grid">
+
+      <div class="about-photo-wrap rev">
+        <div class="about-photo">
+          <img src="https://raw.githubusercontent.com/jerinovahub/jerinovawebsite/main/DSC00504-Enhanced-NR.jpg" alt="Jeri Nova">
+          <div class="photo-label">
+            <p>Las Vegas, NV</p>
+            <h3>JERI NOVA</h3>
+          </div>
+        </div>
+        <div class="about-deco"></div>
+      </div>
+
+      <div class="about-copy rev">
+        <span class="sec-num">05 — About</span>
+        <h2 class="sec-h">Sound. <span>Vision.</span><br>Motion.</h2>
+        <p>Jeri Nova is a Las Vegas-based electronic music artist and producer whose sound traverses the outer edges of <strong>techno, ambient, and experimental electronic music</strong> — with an ear tuned to the cosmos and a heart locked to the grid.</p>
+        <p>Every live set is an immersive experience where visuals and sound collapse into a single unified force — leaving audiences suspended between rhythm and reverie. Whether it's a sweaty club basement or an open desert stage, Jeri Nova brings the frequency.</p>
+        <p>
+          Follow on Instagram: <a href="https://www.instagram.com/jeri_nova" target="_blank">@jeri_nova</a><br>
+          Email: <a href="mailto:jerinova@gmail.com">jerinova@gmail.com</a>
+        </p>
+        <div class="stats">
+          <div class="stat"><span class="sn">8+</span><span class="sl">Years</span></div>
+          <div class="stat"><span class="sn">200+</span><span class="sl">Sets</span></div>
+          <div class="stat"><span class="sn">40+</span><span class="sl">Releases</span></div>
+          <div class="stat"><span class="sn">12</span><span class="sl">Countries</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 EVENTS ── -->
+<section id="events">
+  <div class="wrap">
+    <div class="rev">
+      <span class="sec-num">06 — Events</span>
+      <h2 class="sec-h">Upcoming <span>Shows</span></h2>
+    </div>
+    <div class="rev">
+      <div class="erow"><div class="ed"><div class="dy">14</div><div class="mo">Jun 25</div></div><div class="ei"><h3>NOVA FREQUENCY — LIVE SET</h3><p>AREA15 · Las Vegas, NV</p></div><span class="epill">Tickets</span></div>
+      <div class="erow"><div class="ed"><div class="dy">22</div><div class="mo">Jul 25</div></div><div class="ei"><h3>DEEP SPACE COLLECTIVE</h3><p>Exchange LA · Los Angeles, CA</p></div><span class="epill">Tickets</span></div>
+      <div class="erow"><div class="ed"><div class="dy">09</div><div class="mo">Aug 25</div></div><div class="ei"><h3>ORBITAL SUMMER FESTIVAL</h3><p>Outdoor Stage · Phoenix, AZ</p></div><span class="epill sold">Sold Out</span></div>
+      <div class="erow"><div class="ed"><div class="dy">18</div><div class="mo">Sep 25</div></div><div class="ei"><h3>JERI NOVA — HEADLINE</h3><p>Omnia Nightclub · Las Vegas, NV</p></div><span class="epill">Tickets</span></div>
+      <div class="erow"><div class="ed"><div class="dy">05</div><div class="mo">Nov 25</div></div><div class="ei"><h3>TECHNO SUMMIT EUROPE</h3><p>Fabric · London, UK</p></div><span class="epill">Tickets</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 07 CONTACT ── -->
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="contact-l rev">
+        <span class="sec-num">07 — Contact</span>
+        <h2>Let's Make<br><em>Noise</em> Together</h2>
+        <p>Available for bookings, festival slots, collaborations, licensing, and press. Reach out via email or Instagram.</p>
+        <div class="clinks">
+          <a href="mailto:jerinova@gmail.com" class="clink">
+            <div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg></div>
+            <div><span class="clink-lbl">Email</span><span class="clink-val"><em>jerinova</em>@gmail.com</span></div>
+          </a>
+          <a href="https://www.instagram.com/jeri_nova" target="_blank" class="clink">
+            <div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="#ff5500" stroke="none"/></svg></div>
+            <div><span class="clink-lbl">Instagram</span><span class="clink-val"><em>@jeri_nova</em></span></div>
+          </a>
+          <a href="https://soundcloud.com/jeri-nova" target="_blank" class="clink">
+            <div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="#ff5500"><path d="M1 17.5a3 3 0 0 0 3 2.5h13a4 4 0 0 0 0-8h-.1a6 6 0 0 0-11.6 1.5A3 3 0 0 0 1 17.5z"/></svg></div>
+            <div><span class="clink-lbl">SoundCloud</span><span class="clink-val"><em>soundcloud.com</em>/jeri-nova</span></div>
+          </a>
+          <a href="https://github.com/jerinovahub/jerinovawebsite" target="_blank" class="clink">
+            <div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="#ff5500"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.22.68-.48v-1.69c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg></div>
+            <div><span class="clink-lbl">GitHub</span><span class="clink-val"><em>jerinovahub</em>/jerinovawebsite</span></div>
+          </a>
+        </div>
+      </div>
+
+      <div class="rev">
+        <form onsubmit="handleForm(event)">
+          <div class="frow">
+            <div class="fg"><label>Name</label><input type="text" placeholder="Your name" required></div>
+            <div class="fg"><label>Email</label><input type="email" placeholder="you@email.com" required></div>
+          </div>
+          <div class="fg"><label>Subject</label>
+            <select>
+              <option value="">Select...</option>
+              <option>Booking / Performance</option>
+              <option>Collaboration / Production</option>
+              <option>Licensing / Sync</option>
+              <option>Press / Media</option>
+              <option>General</option>
+            </select>
+          </div>
+          <div class="fg"><label>Message</label><textarea placeholder="Tell me about your venue, project, or vision..."></textarea></div>
+          <button type="submit" class="fsub">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2025 Jeri Nova · jerinova.com</p>
+  <span class="flogo">JERI<em>.</em>NOVA</span>
+  <p>GitHub Pages · Cloudflare DNS</p>
+</footer>
+
+<!-- ── FIXED PLAYER BAR ── -->
+<div id="pbar">
+  <div class="pb-art" id="pb-art">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="#444"><path d="M5 3l12 7-12 7V3z"/></svg>
+  </div>
+  <div class="pb-nowplay">
+    <div class="pb-title" id="pb-title">Select a track</div>
+    <div class="pb-artist">Jeri Nova</div>
+  </div>
+  <div class="pb-ctrl">
+    <button class="pb-btn" onclick="prevTrack()"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h2v12H3zm2.5 6 7.5 5V3z"/></svg></button>
+    <button class="pb-playbtn" id="pb-playbtn" onclick="togglePlay()">
+      <svg id="pb-ico" width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg>
+    </button>
+    <button class="pb-btn" onclick="nextTrack()"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11 2h2v12h-2zm-1.5 6L2 3v10z"/></svg></button>
+  </div>
+  <div class="pb-prog">
+    <div class="pb-track-wrap" id="pb-track-wrap" onclick="seekTo(event)">
+      <div class="pb-track-fill" id="pb-fill"></div>
+    </div>
+    <div class="pb-times"><span id="pb-cur">0:00</span><span id="pb-dur">0:00</span></div>
+  </div>
+  <div class="pb-vol">
+    <svg class="pb-vol-svg" width="14" height="14" viewBox="0 0 16 16" fill="#777"><path d="M3 5H1v6h2l4 4V1zm9.54.46a5 5 0 0 1 0 5.08l1.42 1.42a7 7 0 0 0 0-7.92zm-2.83 1.41a2.5 2.5 0 0 1 0 2.26l1.41 1.41a4.5 4.5 0 0 0 0-5.08z"/></svg>
+    <input type="range" id="vol" min="0" max="1" step="0.01" value="0.85" oninput="setVol(this.value)">
+  </div>
+</div>
+
+<audio id="aud" preload="none"></audio>
+
+<script>
+/* ============================================================
+   TRACK DATA — exact filenames from github.com/jerinovahub/music
+   raw URL format encodes spaces as %20
+============================================================ */
+const MUSIC_BASE = 'https://raw.githubusercontent.com/jerinovahub/music/main/';
+const TRACKS = [
+  { title:'Amour',            file:'AMOUR%2000.mp3' },
+  { title:'Colours Mn Edit',  file:'Colours%20Mn%20edit.mp3' },
+  { title:'Fat Diamond Drift',file:'Fat%20Diamond%20Drift%2000.mp3' },
+  { title:'Krispy Wallace',   file:'Krispy%20Wallace.mp3' },
+  { title:'Love How U Want',  file:'Love%20How%20U%20Want%2000.mp3' },
+  { title:'Mr Guder',         file:'Mr%20guder%2000.mp3' },
+];
+
+/* photos for player art — cycle through these */
+const PHOTO_BASE = 'https://raw.githubusercontent.com/jerinovahub/jerinovawebsite/main/';
+const PHOTOS = [
+  'DSC00503-Enhanced-NR.jpg',
+  'DSC00504-Enhanced-NR.jpg',
+  'DSC00505-Enhanced-NR.jpg',
+  'DSC00515-Enhanced-NR.jpg',
+  'DSC00519-Enhanced-NR.jpg',
+];
+
+/* ── CURSOR ── */
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function lp(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;cur2.style.left=rx+'px';cur2.style.top=ry+'px';requestAnimationFrame(lp)})();
+document.querySelectorAll('a,button,.track,.rcard,.erow').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur2.style.transform='translate(-50%,-50%) scale(1.9)';cur2.style.borderColor='var(--blu)';cur2.style.opacity='.75'});
+  el.addEventListener('mouseleave', ()=>{cur2.style.transform='translate(-50%,-50%) scale(1)';cur2.style.borderColor='var(--org)';cur2.style.opacity='.45'});
+});
+
+/* ── HERO CANVAS — particle field orange+blue ── */
+(()=>{
+  const c=document.getElementById('hero-canvas'),ctx=c.getContext('2d');
+  let W,H;const pts=[];
+  function rsz(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight}
+  rsz();window.addEventListener('resize',rsz);
+  for(let i=0;i<160;i++) pts.push({x:Math.random()*2e3-1e3,y:Math.random()*2e3-1e3,z:Math.random()*2e3,sz:Math.random()*1.1+.2,spd:Math.random()*.35+.1,isOrg:Math.random()>.5});
+  let t=0;
+  (function draw(){
+    ctx.clearRect(0,0,W,H);t+=.003;
+    const cx=W/2,cy=H/2;
+    pts.forEach(p=>{
+      p.z-=p.spd;
+      if(p.z<=0){p.x=Math.random()*2e3-1e3;p.y=Math.random()*2e3-1e3;p.z=2e3}
+      const px=(p.x/p.z)*480+cx,py=(p.y/p.z)*480+cy;
+      if(px<0||px>W||py<0||py>H) return;
+      const r=(1-p.z/2e3)*p.sz*1.8,op=(1-p.z/2e3)*.65;
+      ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);
+      ctx.fillStyle=p.isOrg?`rgba(255,85,0,${op})`:`rgba(29,160,242,${op*.7})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  })();
+})();
+
+/* ── HERO WAVEFORM ── */
+(()=>{
+  const w=document.getElementById('hviz');
+  for(let i=0;i<72;i++){
+    const b=document.createElement('div');b.className='hb';
+    const isB=i%8===0;
+    b.style.cssText=`--mn:${Math.floor(Math.random()*4+2)}px;--mx:${Math.floor(Math.random()*46+6)}px;--d:${(Math.random()*.75+.38).toFixed(2)}s;animation-delay:${(Math.random()*.7).toFixed(2)}s;`+(isB?'background:var(--blu);opacity:.65':'');
+    w.appendChild(b);
+  }
+})();
+
+/* ── RELEASE CARD WAVEFORMS ── */
+for(let k=1;k<=6;k++){
+  const el=document.getElementById('rw'+k);if(!el) continue;
+  const isB=k%2===0;
+  for(let j=0;j<26;j++){
+    const b=document.createElement('div');b.className='rw';
+    b.style.cssText=`--mn:${Math.floor(Math.random()*3+2)}px;--mx:${Math.floor(Math.random()*32+6)}px;--d:${(Math.random()*.75+.42).toFixed(2)}s;animation-delay:${(Math.random()*.55).toFixed(2)}s;`+(isB?'background:rgba(29,160,242,.2)':'background:rgba(255,85,0,.2)');
+    el.appendChild(b);
+  }
+}
+
+/* ── BUILD TRACK LIST ── */
+const tl=document.getElementById('tracklist');
+TRACKS.forEach((tr,i)=>{
+  const div=document.createElement('div');
+  div.className='track';div.dataset.i=i;div.onclick=()=>loadTrack(i);
+  let wbars='';
+  for(let j=0;j<22;j++){
+    const h=Math.floor(Math.random()*20+4);
+    wbars+=`<div class="tw" style="height:${h}px;--mn:${Math.floor(h*.3)}px;--mx:${h}px;animation:hbounce ${(.5+Math.random()*.65).toFixed(2)}s ease-in-out infinite alternate;animation-delay:${(Math.random()*.5).toFixed(2)}s"></div>`;
+  }
+  div.innerHTML=`
+    <div class="tn">${String(i+1).padStart(2,'0')}</div>
+    <div class="tinfo">
+      <div class="tplay"><svg width="11" height="11" viewBox="0 0 11 11" fill="#080808"><path d="M2 1l8 4.5-8 4.5z"/></svg></div>
+      <div class="tmeta"><div class="tt">${tr.title}</div><div class="ta">Jeri Nova</div></div>
+    </div>
+    <div class="twav">${wbars}</div>
+    <div class="tdur">—</div>`;
+  tl.appendChild(div);
+});
+
+/* ── AUDIO ENGINE ── */
+const aud=document.getElementById('aud');
+let curIdx=-1,isPlaying=false;
+
+function loadTrack(idx){
+  curIdx=idx;
+  const tr=TRACKS[idx];
+  aud.src=MUSIC_BASE+tr.file;
+  aud.volume=parseFloat(document.getElementById('vol').value);
+  aud.play().catch(()=>{});
+  isPlaying=true;
+  updatePBIcon();
+  document.getElementById('pb-title').textContent=tr.title;
+  // set photo art in player bar — cycle photos by track index
+  const photo=PHOTOS[idx % PHOTOS.length];
+  document.getElementById('pb-art').innerHTML=`<img src="${PHOTO_BASE+photo}" alt="${tr.title}" style="width:100%;height:100%;object-fit:cover">`;
+  document.querySelectorAll('.track').forEach((el,i)=>el.classList.toggle('playing',i===idx));
+}
+function togglePlay(){
+  if(curIdx<0){loadTrack(0);return}
+  if(isPlaying){aud.pause();isPlaying=false}
+  else{aud.play().catch(()=>{});isPlaying=true}
+  updatePBIcon();
+}
+function prevTrack(){loadTrack((curIdx-1+TRACKS.length)%TRACKS.length)}
+function nextTrack(){loadTrack((curIdx+1)%TRACKS.length)}
+function setVol(v){aud.volume=v}
+function seekTo(e){
+  if(!aud.duration) return;
+  const r=e.currentTarget.getBoundingClientRect();
+  aud.currentTime=((e.clientX-r.left)/r.width)*aud.duration;
+}
+function fmt(s){const m=Math.floor(s/60),sc=Math.floor(s%60);return`${m}:${sc<10?'0':''}${sc}`}
+function updatePBIcon(){
+  document.getElementById('pb-ico').innerHTML=isPlaying
+    ?'<rect x="3" y="2" width="4" height="14" fill="#080808"/><rect x="11" y="2" width="4" height="14" fill="#080808"/>'
+    :'<path d="M4 2.5l11 6.5-11 6.5z"/>';
+}
+aud.addEventListener('timeupdate',()=>{
+  if(!aud.duration) return;
+  const pct=(aud.currentTime/aud.duration)*100;
+  document.getElementById('pb-fill').style.width=pct+'%';
+  document.getElementById('pb-cur').textContent=fmt(aud.currentTime);
+  // update duration in track row too
+  const row=document.querySelectorAll('.track')[curIdx];
+  if(row) row.querySelector('.tdur').textContent=fmt(aud.duration);
+  document.getElementById('pb-dur').textContent=fmt(aud.duration);
+});
+aud.addEventListener('ended',nextTrack);
+
+/* ── INTERACTIVE VISUALIZER ── */
+const vc=document.getElementById('vis-canvas'),vctx=vc.getContext('2d');
+let VW,VH,vMode=0,vt=0;
+function rszV(){const r=vc.parentElement.getBoundingClientRect();VW=vc.width=r.width;VH=vc.height=r.height}
+rszV();window.addEventListener('resize',rszV);
+const BINS=128,fk=new Float32Array(BINS);let ap=0;
+function updFake(){
+  ap+=.02;
+  for(let i=0;i<BINS;i++){
+    const f=i/BINS,bass=i<20?Math.pow(1-f*5,2)*.88:0,mid=(i>=20&&i<70)?Math.sin(f*Math.PI*3)*.5:0,hi=i>=70?(1-f)*.32:0,wave=Math.sin(ap*2.1+i*.19)*.28+.28,kick=Math.max(0,Math.sin(ap*3.9)*.55)*(i<12?1:0);
+    fk[i]=Math.max(0,Math.min(1,bass+mid+hi+wave+kick+(Math.random()*.055)));
+  }
+}
+const vparts=[];for(let i=0;i<110;i++) vparts.push({x:Math.random()*1400,y:Math.random()*700,vx:(Math.random()-.5)*.7,vy:(Math.random()-.5)*.7,r:Math.random()*2.2+.4,life:Math.random(),isOrg:Math.random()>.5});
+function drawSpectrum(){
+  const bw=VW/BINS;
+  for(let i=0;i<BINS;i++){
+    const h=fk[i]*VH*.8,x=i*bw,isB=i%9===0;
+    vctx.fillStyle=isB?`rgba(29,160,242,${.55+fk[i]*.45})`:`rgba(255,85,0,${.58+fk[i]*.42})`;
+    vctx.fillRect(x,VH/2-h/2,bw-.7,h);
+    vctx.fillStyle=isB?'rgba(29,160,242,.07)':'rgba(255,85,0,.07)';
+    vctx.fillRect(x,VH/2+h/2,bw-.7,7);
+  }
+}
+function drawWaveform(){
+  [[`rgba(255,85,0,.85)`,2,1],[`rgba(29,160,242,.4)`,1,.58]].forEach(([col,lw,sc])=>{
+    vctx.strokeStyle=col;vctx.lineWidth=lw;vctx.shadowColor=col;vctx.shadowBlur=lw===2?9:0;
+    vctx.beginPath();
+    for(let i=0;i<BINS;i++){const x=i/BINS*VW,y=VH/2+(fk[i]-.5)*VH*sc;i===0?vctx.moveTo(x,y):vctx.lineTo(x,y)}
+    vctx.stroke();
+  });
+  vctx.shadowBlur=0;
+}
+function drawRadial(){
+  const cx=VW/2,cy=VH/2,mR=Math.min(VW,VH)*.38;
+  for(let i=0;i<BINS;i++){
+    const angle=i/BINS*Math.PI*2-Math.PI/2,amp=fk[i],r1=mR*.28,r2=r1+amp*mR*.72,isB=i%9===0;
+    vctx.strokeStyle=isB?`rgba(29,160,242,${.55+amp*.45})`:`rgba(255,85,0,${.58+amp*.42})`;
+    vctx.lineWidth=2;vctx.beginPath();
+    vctx.moveTo(cx+Math.cos(angle)*r1,cy+Math.sin(angle)*r1);
+    vctx.lineTo(cx+Math.cos(angle)*r2,cy+Math.sin(angle)*r2);
+    vctx.stroke();
+  }
+  const avg=fk.slice(0,8).reduce((a,b)=>a+b,0)/8,g=vctx.createRadialGradient(VW/2,VH/2,0,VW/2,VH/2,mR*.5*avg+10);
+  g.addColorStop(0,`rgba(255,85,0,${.22*avg})`);g.addColorStop(1,'transparent');
+  vctx.fillStyle=g;vctx.beginPath();vctx.arc(VW/2,VH/2,mR*.5*avg+10,0,Math.PI*2);vctx.fill();
+}
+function drawOrbit(){
+  const avg=fk.slice(0,24).reduce((a,b)=>a+b,0)/24;
+  vparts.forEach(p=>{
+    p.life+=.004+avg*.018;if(p.life>1){p.life=0;p.x=Math.random()*VW;p.y=Math.random()*VH}
+    p.x+=p.vx*(1+avg*2.4);p.y+=p.vy*(1+avg*2.4);
+    if(p.x<0||p.x>VW)p.vx*=-1;if(p.y<0||p.y>VH)p.vy*=-1;
+    const op=Math.sin(p.life*Math.PI)*.8;
+    vctx.beginPath();vctx.arc(p.x,p.y,p.r*(1+avg*1.7),0,Math.PI*2);
+    vctx.fillStyle=p.isOrg?`rgba(255,85,0,${op})`:`rgba(29,160,242,${op*.75})`;
+    vctx.fill();
+    vparts.forEach(q=>{
+      const dx=p.x-q.x,dy=p.y-q.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<85){vctx.strokeStyle=p.isOrg?`rgba(255,85,0,${(1-d/85)*.1})`:`rgba(29,160,242,${(1-d/85)*.07})`;vctx.lineWidth=.5;vctx.beginPath();vctx.moveTo(p.x,p.y);vctx.lineTo(q.x,q.y);vctx.stroke()}
+    });
+  });
+}
+(function vizLoop(){
+  updFake();vt+=.015;vctx.clearRect(0,0,VW,VH);
+  if(vMode===0) drawSpectrum();
+  else if(vMode===1) drawWaveform();
+  else if(vMode===2) drawRadial();
+  else drawOrbit();
+  requestAnimationFrame(vizLoop);
+})();
+function setVizMode(n,btn){vMode=n;document.querySelectorAll('.vb').forEach(b=>b.classList.remove('on'));btn.classList.add('on')}
+
+/* ── SCROLL REVEAL ── */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('on'),i*55);io.unobserve(e.target)}});
+},{threshold:.1});
+document.querySelectorAll('.rev').forEach(el=>io.observe(el));
+
+/* ── CONTACT FORM ── */
+function handleForm(e){
+  e.preventDefault();const btn=e.target.querySelector('.fsub');
+  btn.textContent='Sent ✓';btn.style.background='var(--blu)';
+  setTimeout(()=>{btn.textContent='Send Message';btn.style.background='var(--org)';e.target.reset()},3000);
+}
+</script>
+</body>
+</html>
