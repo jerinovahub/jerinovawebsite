@@ -7,25 +7,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-<!-- ALL FUNCTIONS DEFINED IN HEAD — Cloudflare cannot interfere here -->
 <script>
+/* ── ALL JS IN HEAD ── Cloudflare only injects into body scripts ── */
 var MUSIC_BASE='https://raw.githubusercontent.com/jerinovahub/music/main/';
 var DROPS_BASE='https://raw.githubusercontent.com/jerinovahub/drops/main/';
 var DROPS_ART='https://raw.githubusercontent.com/jerinovahub/drops/main/11.png';
 var TRACKS=[
-  {title:'Amour',            file:'AMOUR%2000.mp3'},
-  {title:'Colours Mn Edit',  file:'Colours%20Mn%20edit.mp3'},
-  {title:'Fat Diamond Drift',file:'Fat%20Diamond%20Drift%2000.mp3'},
-  {title:'Krispy Wallace',   file:'Krispy%20Wallace.mp3'},
-  {title:'Love How U Want',  file:'Love%20How%20U%20Want%2000.mp3'},
-  {title:'Mr Guder',         file:'Mr%20guder%2000.mp3'}
+  {title:'Amour',              file:'AMOUR%2000.mp3'},
+  {title:'Colours Mn Edit',    file:'Colours%20Mn%20edit.mp3'},
+  {title:'Fat Diamond Drift',  file:'Fat%20Diamond%20Drift%2000.mp3'},
+  {title:'Krispy Wallace',     file:'Krispy%20Wallace.mp3'},
+  {title:'Love How U Want',    file:'Love%20How%20U%20Want%2000.mp3'},
+  {title:'Mr Guder',           file:'Mr%20guder%2000.mp3'}
 ];
 var DROPS=[
-  {title:'2 Ur Doom',       file:'2%20Ur%20Doom.mp3'},
-  {title:'Check Michael',   file:'CHECK%20MICHAEL.mp3'},
-  {title:'Film',            file:'FILM.mp3'},
-  {title:'Freakular',       file:'Freakular.mp3'},
-  {title:'He Made A Dub',   file:'He%20Made%20A%20Dub.mp3'},
+  {title:'2 Ur Doom',            file:'2%20Ur%20Doom.mp3'},
+  {title:'Check Michael',        file:'CHECK%20MICHAEL.mp3'},
+  {title:'Film',                 file:'FILM.mp3'},
+  {title:'Freakular',            file:'Freakular.mp3'},
+  {title:'He Made A Dub',        file:'He%20Made%20A%20Dub.mp3'},
   {title:'Rockin Da House Flip', file:'ROCKIN%20DA%20HOUSE%20flip.mp3'}
 ];
 var PHOTOS=['DSC00503-Enhanced-NR.jpg','DSC00504-Enhanced-NR.jpg','DSC00505-Enhanced-NR.jpg'];
@@ -46,28 +46,22 @@ function loadTrack(idx,useDrops){
   var t=document.getElementById('pb-title');
   if(t)t.textContent=list[idx].title;
   var art=document.getElementById('pb-art');
-  if(art){
-    if(useDrops){
-      art.innerHTML='<img src="'+DROPS_ART+'" style="width:100%;height:100%;object-fit:cover">';
-    } else {
-      art.innerHTML='<img src="'+PHOTOS[idx%PHOTOS.length]+'" style="width:100%;height:100%;object-fit:cover">';
-    }
-  }
-  var rows=document.querySelectorAll('.track');
-  for(var i=0;i<rows.length;i++)rows[i].classList.toggle('playing',i===idx&&!useDrops);
-  var drows=document.querySelectorAll('.drop-track');
-  for(var i=0;i<drows.length;i++)drows[i].classList.toggle('playing',i===idx&&useDrops);
+  if(art)art.innerHTML='<img src="'+(useDrops?DROPS_ART:PHOTOS[idx%PHOTOS.length])+'" style="width:100%;height:100%;object-fit:cover">';
+  document.querySelectorAll('.ptrack').forEach(function(r,i){
+    r.style.background=i===idx&&!useDrops?'#222':'#181818';
+    r.style.borderColor=i===idx&&!useDrops?'rgba(255,85,0,.4)':'transparent';
+  });
 }
 function togglePlay(){
   var a=document.getElementById('aud');
   if(!a)return;
-  if(curIdx<0){loadTrack(0);return;}
+  if(curIdx<0){loadTrack(0,false);return;}
   if(isPlaying){a.pause();isPlaying=false;}
   else{a.play().catch(function(){});isPlaying=true;}
   updatePBIcon();
 }
-function prevTrack(){loadTrack((curIdx-1+TRACKS.length)%TRACKS.length);}
-function nextTrack(){loadTrack((curIdx+1)%TRACKS.length);}
+function prevTrack(){loadTrack((curIdx-1+TRACKS.length)%TRACKS.length,false);}
+function nextTrack(){loadTrack((curIdx+1)%TRACKS.length,false);}
 function setVol(v){var a=document.getElementById('aud');if(a)a.volume=parseFloat(v);}
 function seekTo(e){
   var a=document.getElementById('aud');
@@ -77,28 +71,6 @@ function seekTo(e){
 }
 function fmt(s){var m=Math.floor(s/60),sc=Math.floor(s%60);return m+':'+(sc<10?'0':'')+sc;}
 function updatePBIcon(){
-  /* Build track list */
-  var tl = document.getElementById('tracklist');
-  if(tl && tl.children.length === 0){
-    for(var i=0; i<TRACKS.length; i++){
-      (function(idx){
-        var div = document.createElement('div');
-        div.className = 'track';
-        div.style.cssText = 'display:grid;grid-template-columns:40px 1fr 140px 58px;align-items:center;gap:1rem;padding:.8rem 1.1rem;background:#181818;border:1px solid transparent;cursor:pointer;margin-bottom:2px';
-        div.onclick = function(){ loadTrack(idx, false); };
-        div.innerHTML = '<div style="font-family:Space Mono,monospace;font-size:.68rem;color:#444;text-align:center">'+String(idx+1).padStart(2,'0')+'</div>'
-          +'<div style="display:flex;align-items:center;gap:.8rem;min-width:0">'
-          +'<div style="width:30px;height:30px;border-radius:50%;background:#ff5500;display:flex;align-items:center;justify-content:center;flex-shrink:0">'
-          +'<svg width="11" height="11" viewBox="0 0 11 11" fill="#080808"><path d="M2 1l8 4.5-8 4.5z"/></svg></div>'
-          +'<div><div style="font-size:.88rem;font-weight:500;color:#f0f0f0">'+TRACKS[idx].title+'</div>'
-          +'<div style="font-size:.72rem;color:#888;margin-top:.1rem">Jeri Nova</div></div></div>'
-          +'<div style="height:28px;display:flex;align-items:center;gap:1px;overflow:hidden;opacity:.5"></div>'
-          +'<div style="font-family:Space Mono,monospace;font-size:.63rem;color:#444;text-align:right">—</div>';
-        tl.appendChild(div);
-      })(i);
-    }
-  }
-});
   var ico=document.getElementById('pb-ico');
   if(!ico)return;
   ico.innerHTML=isPlaying
@@ -106,11 +78,105 @@ function updatePBIcon(){
     :'<path d="M4 2.5l11 6.5-11 6.5z"/>';
 }
 
+window.addEventListener('load',function(){
+  var a=document.getElementById('aud');
+  if(a){
+    a.addEventListener('timeupdate',function(){
+      if(!a.duration)return;
+      var pf=document.getElementById('pb-fill');
+      if(pf)pf.style.width=((a.currentTime/a.duration)*100)+'%';
+      var pc=document.getElementById('pb-cur');
+      if(pc)pc.textContent=fmt(a.currentTime);
+      var pd=document.getElementById('pb-dur');
+      if(pd)pd.textContent=fmt(a.duration);
+    });
+    a.addEventListener('ended',function(){nextTrack();});
+  }
+
+  /* Build playlist */
+  var tl=document.getElementById('tracklist');
+  if(tl){
+    for(var i=0;i<TRACKS.length;i++){
+      (function(idx){
+        var row=document.createElement('div');
+        row.className='ptrack';
+        row.style.cssText='display:grid;grid-template-columns:36px 1fr 48px;align-items:center;gap:1rem;padding:.75rem 1rem;background:#181818;border:1px solid transparent;cursor:pointer;margin-bottom:2px;transition:background .15s,border-color .15s';
+        row.onmouseenter=function(){if(this.style.borderColor==='transparent')this.style.background='#202020';}
+        row.onmouseleave=function(){if(this.style.borderColor==='transparent')this.style.background='#181818';}
+        row.onclick=function(){loadTrack(idx,false);}
+        row.innerHTML=
+          '<div style="font-family:monospace;font-size:.7rem;color:#555;text-align:center">'+String(idx+1).padStart(2,'0')+'</div>'
+          +'<div style="display:flex;align-items:center;gap:.7rem;min-width:0">'
+          +'<div style="width:28px;height:28px;border-radius:50%;background:#ff5500;display:flex;align-items:center;justify-content:center;flex-shrink:0">'
+          +'<svg width="10" height="10" viewBox="0 0 10 10" fill="#080808"><path d="M2 1l7 4-7 4z"/></svg></div>'
+          +'<div style="min-width:0">'
+          +'<div style="font-size:.88rem;font-weight:500;color:#f0f0f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+TRACKS[idx].title+'</div>'
+          +'<div style="font-size:.7rem;color:#777;margin-top:2px">Jeri Nova</div>'
+          +'</div></div>'
+          +'<div style="font-family:monospace;font-size:.62rem;color:#555;text-align:right">—</div>';
+        tl.appendChild(row);
+      })(i);
+    }
+  }
+
+  /* Hero waveform */
+  var hviz=document.getElementById('hviz');
+  if(hviz){
+    for(var i=0;i<72;i++){
+      var b=document.createElement('div');b.className='hb';
+      var isBlue=i%8===0;
+      b.style.cssText='flex:1;max-width:6px;border-radius:2px 2px 0 0;opacity:.8;'
+        +'background:'+(isBlue?'#1da0f2':'#ff5500')+';'
+        +'animation:hbounce '+(Math.random()*0.75+0.38).toFixed(2)+'s ease-in-out infinite alternate;'
+        +'animation-delay:'+(Math.random()*0.7).toFixed(2)+'s;'
+        +'--mn:'+(Math.floor(Math.random()*4+2))+'px;'
+        +'--mx:'+(Math.floor(Math.random()*46+6))+'px;'
+        +(isBlue?'opacity:.65':'');
+      hviz.appendChild(b);
+    }
+  }
+
+  /* Hero canvas */
+  var c=document.getElementById('hero-canvas');
+  if(c){
+    var ctx=c.getContext('2d'),W,H,pts=[],t=0;
+    function rsz(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;}
+    rsz();window.addEventListener('resize',rsz);
+    for(var i=0;i<160;i++) pts.push({x:Math.random()*2000-1000,y:Math.random()*2000-1000,z:Math.random()*2000,sz:Math.random()*1.1+0.2,spd:Math.random()*0.35+0.1,isOrg:Math.random()>0.5});
+    (function draw(){
+      ctx.clearRect(0,0,W,H);t+=0.003;
+      var cx=W/2,cy=H/2;
+      for(var i=0;i<pts.length;i++){
+        var p=pts[i];p.z-=p.spd;
+        if(p.z<=0){p.x=Math.random()*2000-1000;p.y=Math.random()*2000-1000;p.z=2000;}
+        var px=(p.x/p.z)*480+cx,py=(p.y/p.z)*480+cy;
+        if(px<0||px>W||py<0||py>H)continue;
+        var r=(1-p.z/2000)*p.sz*1.8,op=(1-p.z/2000)*0.65;
+        ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);
+        ctx.fillStyle=p.isOrg?'rgba(255,85,0,'+op+')':'rgba(29,160,242,'+(op*0.7)+')';
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    })();
+  }
+
+  /* Contact form */
+  var cf=document.getElementById('contact-form');
+  if(cf){
+    cf.addEventListener('submit',function(e){
+      e.preventDefault();
+      var btn=this.querySelector('.fsub');
+      btn.textContent='Sent \u2713';btn.style.background='#1da0f2';
+      var f=this;
+      setTimeout(function(){btn.textContent='Send Message';btn.style.background='#ff5500';f.reset();},3000);
+    });
+  }
+});
 </script>
 
 <style>
 :root{
-  --blk:#080808;--blk2:#101010;--blk3:#181818;--blk4:#222222;
+  --blk:#080808;--blk2:#101010;--blk3:#181818;--blk4:#222;
   --org:#ff5500;--org2:#ff7a2f;--org3:rgba(255,85,0,.12);
   --blu:#1da0f2;--wht:#f0f0f0;--gry:#888;--gry2:#444;
   --bdr:rgba(255,255,255,.07);--bdro:rgba(255,85,0,.22);
@@ -118,7 +184,7 @@ function updatePBIcon(){
 *{margin:0;padding:0;box-sizing:border-box;cursor:default}
 html{scroll-behavior:smooth}
 body{background:var(--blk);color:var(--wht);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden}
-a,button,.track,.rcard,.erow,.vb,.pb-playbtn,.pb-btn,.gitem{cursor:pointer}
+a,button,.ptrack,.rcard,.erow,.vb,.pb-playbtn,.pb-btn{cursor:pointer}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:58px;background:rgba(8,8,8,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdr)}
 .logo{font-family:'Anton',sans-serif;font-size:1.3rem;letter-spacing:.14em;color:var(--wht);text-decoration:none}
@@ -146,8 +212,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .btn-o:hover{background:transparent;color:var(--org);transform:translateY(-2px)}
 .btn-b{font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.1em;padding:.82rem 2rem;background:transparent;color:var(--blu);text-decoration:none;text-transform:uppercase;border:2px solid var(--blu);transition:background .2s,color .2s,transform .15s}
 .btn-b:hover{background:var(--blu);color:var(--blk);transform:translateY(-2px)}
-.scroll-cue{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;opacity:0;animation:fadein 1s 2s forwards}
-.scroll-cue span{font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.22em;color:var(--gry);text-transform:uppercase}
+.scroll-cue{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);opacity:0;animation:fadein 1s 2s forwards}
 .scroll-line{width:1px;height:38px;background:linear-gradient(to bottom,var(--org),transparent);animation:scpulse 2s ease-in-out infinite}
 @keyframes scpulse{0%,100%{opacity:.25}50%{opacity:1}}
 @keyframes fadeup{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
@@ -160,21 +225,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .sec-sub{font-size:.92rem;color:var(--gry);line-height:1.75;max-width:520px}
 
 #music{background:var(--blk2);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding:6.5rem 0}
-.tracklist{display:flex;flex-direction:column;gap:2px;margin-top:2rem;min-height:10px}
-.track{display:grid;grid-template-columns:40px 1fr 140px 58px;align-items:center;gap:1rem;padding:.8rem 1.1rem;background:var(--blk3);border:1px solid transparent;transition:background .18s,border-color .18s;cursor:pointer}
-.track:hover,.track.playing{background:var(--blk4);border-color:var(--bdro)}
-.track.playing .tn,.track.playing .tt{color:var(--org)}
-.tn{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--gry2);text-align:center}
-.tinfo{display:flex;align-items:center;gap:.8rem;min-width:0}
-.tplay{width:30px;height:30px;border-radius:50%;background:var(--org);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s}
-.track:hover .tplay,.track.playing .tplay{transform:scale(1.1)}
-.tmeta{min-width:0}
-.tt{font-size:.88rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ta{font-size:.72rem;color:var(--gry);margin-top:.1rem}
-.twav{height:28px;display:flex;align-items:center;gap:1px;overflow:hidden;opacity:.4;transition:opacity .2s}
-.track:hover .twav,.track.playing .twav{opacity:1}
-.tw{width:2px;border-radius:1px;background:var(--org)}
-.tdur{font-family:'Space Mono',monospace;font-size:.63rem;color:var(--gry2);text-align:right}
+#tracklist{margin-top:2rem;display:block;min-height:20px}
 
 #pbar{position:fixed;bottom:0;left:0;right:0;z-index:500;height:68px;background:var(--blk2);border-top:1px solid var(--bdro);display:flex;align-items:center;gap:1.2rem;padding:0 1.8rem}
 .pb-art{width:42px;height:42px;flex-shrink:0;overflow:hidden;border:1px solid var(--bdro);background:var(--blk3);display:flex;align-items:center;justify-content:center}
@@ -183,9 +234,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .pb-title{font-size:.8rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pb-artist{font-size:.7rem;color:var(--gry);margin-top:.1rem}
 .pb-ctrl{display:flex;align-items:center;gap:.8rem;flex-shrink:0}
-.pb-btn{width:32px;height:32px;border:none;background:none;color:var(--gry);display:flex;align-items:center;justify-content:center;transition:color .2s;cursor:pointer}
+.pb-btn{width:32px;height:32px;border:none;background:none;color:var(--gry);display:flex;align-items:center;justify-content:center;transition:color .2s}
 .pb-btn:hover{color:var(--wht)}
-.pb-playbtn{width:40px;height:40px;border-radius:50%;background:var(--org);border:none;display:flex;align-items:center;justify-content:center;transition:transform .15s;cursor:pointer}
+.pb-playbtn{width:40px;height:40px;border-radius:50%;background:var(--org);border:none;display:flex;align-items:center;justify-content:center;transition:transform .15s}
 .pb-playbtn:hover{transform:scale(1.08)}
 .pb-prog{flex:1;display:flex;flex-direction:column;gap:.42rem}
 .pb-track-wrap{width:100%;height:4px;background:var(--blk4);border-radius:2px;position:relative;cursor:pointer}
@@ -194,11 +245,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .pb-vol{display:flex;align-items:center;gap:.5rem;width:90px;flex-shrink:0}
 .pb-vol input{flex:1;accent-color:var(--org);cursor:pointer}
 
-
-
 #gallery{background:var(--blk);padding:6.5rem 0}
 .gallery-grid{display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:auto auto;gap:3px;margin-top:2.5rem}
-.gitem{overflow:hidden;position:relative;background:var(--blk3);cursor:default}
+.gitem{overflow:hidden;position:relative;background:var(--blk3)}
 .gitem:first-child{grid-row:span 2}
 .gitem img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s,filter .4s;filter:brightness(.9) saturate(.85)}
 .gitem:hover img{transform:scale(1.04);filter:brightness(1) saturate(1)}
@@ -210,10 +259,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .rel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1px;background:var(--bdr);border:1px solid var(--bdr);margin-top:2.5rem}
 .rcard{background:var(--blk);overflow:hidden;transition:background .2s;cursor:pointer}
 .rcard:hover{background:var(--blk3)}
-.rcard-art{width:100%;aspect-ratio:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--blk3)}
+.rcard-art{width:100%;aspect-ratio:1;overflow:hidden;background:var(--blk3);position:relative}
 .rcard-art img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s,filter .3s}
 .rcard:hover .rcard-art img{transform:scale(1.04);filter:brightness(.75)}
-
 .rcard-info{padding:1rem 1.1rem 1.3rem}
 .rtitle{font-size:.88rem;font-weight:600;margin-bottom:.2rem}
 .rmeta{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--gry);letter-spacing:.07em}
@@ -288,9 +336,8 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   .about-grid,.contact-grid{grid-template-columns:1fr;gap:2.8rem}
   .gallery-grid{grid-template-columns:1fr;grid-template-rows:auto}.gitem:first-child{grid-row:span 1}
   .frow{grid-template-columns:1fr}.erow{grid-template-columns:54px 1fr}.epill{display:none}
-  footer{padding:1.4rem;margin-bottom:68px}#pbar{gap:.7rem;padding:0 1rem}
-  .pb-nowplay{width:120px}.pb-vol{display:none}
-  .track{grid-template-columns:34px 1fr 48px}.twav{display:none}
+  footer{padding:1.4rem;margin-bottom:68px}
+  #pbar{gap:.7rem;padding:0 1rem}.pb-nowplay{width:120px}.pb-vol{display:none}
 }
 </style>
 </head>
@@ -327,12 +374,10 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   <div class="wrap">
     <span class="sec-num">01 — Music</span>
     <h2 class="sec-h">The <span>Playlist</span></h2>
-    <p class="sec-sub">Select any track to play. All music hosted at github.com/jerinovahub/music</p>
-    <div class="tracklist" id="tracklist"></div>
+    <p class="sec-sub">Select any track to play.</p>
+    <div id="tracklist"></div>
   </div>
 </section>
-
-
 
 <section id="gallery">
   <div class="wrap">
@@ -351,12 +396,12 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
     <span class="sec-num">04 — Releases</span>
     <h2 class="sec-h">Latest <span>Drops</span></h2>
     <div class="rel-grid">
-      <div class="rcard" onclick="loadTrack(0,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">2 Ur Doom</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
-      <div class="rcard" onclick="loadTrack(1,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">Check Michael</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
-      <div class="rcard" onclick="loadTrack(2,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">Film</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">Hip Hop</span></div></div>
-      <div class="rcard" onclick="loadTrack(3,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">Freakular</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
-      <div class="rcard" onclick="loadTrack(4,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">He Made A Dub</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
-      <div class="rcard" onclick="loadTrack(5,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">Rockin Da House Flip</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">House</span></div></div>
+      <div class="rcard" onclick="loadTrack(0,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">2 Ur Doom</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
+      <div class="rcard" onclick="loadTrack(1,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Check Michael</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
+      <div class="rcard" onclick="loadTrack(2,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Film</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">Hip Hop</span></div></div>
+      <div class="rcard" onclick="loadTrack(3,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Freakular</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
+      <div class="rcard" onclick="loadTrack(4,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">He Made A Dub</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
+      <div class="rcard" onclick="loadTrack(5,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Rockin Da House Flip</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">House</span></div></div>
     </div>
   </div>
 </section>
@@ -375,8 +420,8 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
         <span class="sec-num">05 — About</span>
         <h2 class="sec-h">Sound. <span>Vision.</span><br>Motion.</h2>
         <p>Jeri Nova is a Las Vegas-based electronic music artist and producer whose sound traverses the outer edges of <strong>techno, ambient, and experimental electronic music</strong> — with an ear tuned to the cosmos and a heart locked to the grid.</p>
-        <p>Every live set is an immersive experience where visuals and sound collapse into a single unified force — leaving audiences suspended between rhythm and reverie. Whether it's a sweaty club basement or an open desert stage, Jeri Nova brings the frequency.</p>
-        <p>Follow on Instagram: <a href="https://www.instagram.com/jeri_nova" target="_blank">@jeri_nova</a><br>Email: <a href="/cdn-cgi/l/email-protection#e38986918a8d8c9582a3848e828a8fcd808c8e"><span class="__cf_email__" data-cfemail="79131c0b1017160f18391e14181015571a1614">[email&#160;protected]</span></a></p>
+        <p>Every live set is an immersive experience where visuals and sound collapse into a single unified force — leaving audiences suspended between rhythm and reverie.</p>
+        <p>Follow on Instagram: <a href="https://www.instagram.com/jeri_nova" target="_blank">@jeri_nova</a><br>Email: <a href="mailto:jerinova@gmail.com">jerinova@gmail.com</a></p>
         <div class="stats">
           <div class="stat"><span class="sn">8+</span><span class="sl">Years</span></div>
           <div class="stat"><span class="sn">200+</span><span class="sl">Sets</span></div>
@@ -408,10 +453,9 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
         <h2>Let's Make<br><em>Noise</em> Together</h2>
         <p>Available for bookings, festival slots, collaborations, licensing, and press.</p>
         <div class="clinks">
-          <a href="/cdn-cgi/l/email-protection#b6dcd3c4dfd8d9c0d7f6d1dbd7dfda98d5d9db" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg></div><div><span class="clink-lbl">Email</span><span class="clink-val"><em>jerinova</em>@gmail.com</span></div></a>
+          <a href="mailto:jerinova@gmail.com" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg></div><div><span class="clink-lbl">Email</span><span class="clink-val"><em>jerinova</em>@gmail.com</span></div></a>
           <a href="https://www.instagram.com/jeri_nova" target="_blank" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="#ff5500" stroke="none"/></svg></div><div><span class="clink-lbl">Instagram</span><span class="clink-val"><em>@jeri_nova</em></span></div></a>
           <a href="https://soundcloud.com/jeri-nova" target="_blank" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="#ff5500"><path d="M1 17.5a3 3 0 0 0 3 2.5h13a4 4 0 0 0 0-8h-.1a6 6 0 0 0-11.6 1.5A3 3 0 0 0 1 17.5z"/></svg></div><div><span class="clink-lbl">SoundCloud</span><span class="clink-val"><em>soundcloud.com</em>/jeri-nova</span></div></a>
-
         </div>
       </div>
       <div>
@@ -455,53 +499,5 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
 
 <audio id="aud" preload="none"></audio>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-/* All DOM-dependent code runs after page loads */
-window.addEventListener('DOMContentLoaded', function(){
-
-  /* Audio time/ended listeners */
-  var a = document.getElementById('aud');
-  a.addEventListener('timeupdate', function(){
-    if(!a.duration) return;
-    document.getElementById('pb-fill').style.width = ((a.currentTime/a.duration)*100)+'%';
-    document.getElementById('pb-cur').textContent = fmt(a.currentTime);
-    document.getElementById('pb-dur').textContent = fmt(a.duration);
-    var rows = document.querySelectorAll('.track');
-    if(rows[curIdx]) rows[curIdx].querySelector('.tdur').textContent = fmt(a.duration);
-  });
-  a.addEventListener('ended', nextTrack);
-
-  /* Hero waveform */
-  var w = document.getElementById('hviz');
-  for(var i=0; i<72; i++){
-    var b = document.createElement('div'); b.className='hb';
-    b.style.cssText = '--mn:'+Math.floor(Math.random()*4+2)+'px;--mx:'+Math.floor(Math.random()*46+6)+'px;--d:'+(Math.random()*0.75+0.38).toFixed(2)+'s;animation-delay:'+(Math.random()*0.7).toFixed(2)+'s;'+(i%8===0?'background:var(--blu);opacity:.65':'');
-    w.appendChild(b);
-  }
-
-  /* Hero canvas */
-  var c = document.getElementById('hero-canvas'), ctx = c.getContext('2d');
-  var W, H, pts=[], t=0;
-  function rsz(){ W=c.width=c.offsetWidth; H=c.height=c.offsetHeight; }
-  rsz(); window.addEventListener('resize', rsz);
-  for(var i=0; i<160; i++) pts.push({x:Math.random()*2000-1000,y:Math.random()*2000-1000,z:Math.random()*2000,sz:Math.random()*1.1+0.2,spd:Math.random()*0.35+0.1,isOrg:Math.random()>0.5});
-  (function draw(){
-    ctx.clearRect(0,0,W,H); t+=0.003;
-    var cx=W/2, cy=H/2;
-    for(var i=0; i<pts.length; i++){
-      var p=pts[i]; p.z-=p.spd;
-      if(p.z<=0){p.x=Math.random()*2000-1000;p.y=Math.random()*2000-1000;p.z=2000;}
-      var px=(p.x/p.z)*480+cx, py=(p.y/p.z)*480+cy;
-      if(px<0||px>W||py<0||py>H) continue;
-      var r=(1-p.z/2000)*p.sz*1.8, op=(1-p.z/2000)*0.65;
-      ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2);
-      ctx.fillStyle=p.isOrg?'rgba(255,85,0,'+op+')':'rgba(29,160,242,'+(op*0.7)+')';
-      ctx.fill();
-    }
-    requestAnimationFrame(draw);
-  })();
-
-  /* Contact form */
-  document.getElementById('contact-form').addEventListener('submit', function(e){
-    e.preventDefault();
-    var btn=this.qu
+</body>
+</html>
