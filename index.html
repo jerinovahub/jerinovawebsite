@@ -19,7 +19,7 @@ var TRACKS=[
   {title:'Mr Guder',         file:'Mr%20guder%2000.mp3'}
 ];
 var PHOTOS=['DSC00503-Enhanced-NR.jpg','DSC00504-Enhanced-NR.jpg','DSC00505-Enhanced-NR.jpg'];
-var curIdx=-1, isPlaying=false, vMode=0;
+var curIdx=-1, isPlaying=false;
 
 function loadTrack(idx){
   var a=document.getElementById('aud');
@@ -63,12 +63,7 @@ function updatePBIcon(){
     ?'<rect x="3" y="2" width="4" height="14" fill="#080808"/><rect x="11" y="2" width="4" height="14" fill="#080808"/>'
     :'<path d="M4 2.5l11 6.5-11 6.5z"/>';
 }
-function setVizMode(n,btn){
-  vMode=n;
-  var btns=document.querySelectorAll('.vb');
-  for(var i=0;i<btns.length;i++)btns[i].classList.remove('on');
-  btn.classList.add('on');
-}
+
 </script>
 
 <style>
@@ -157,15 +152,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .pb-vol{display:flex;align-items:center;gap:.5rem;width:90px;flex-shrink:0}
 .pb-vol input{flex:1;accent-color:var(--org);cursor:pointer}
 
-#visuals{padding:0;background:var(--blk)}
-.vis-stage{height:80vh;min-height:480px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-#vis-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.vis-ui{position:relative;z-index:2;text-align:center;padding:2rem}
-.vis-ui h2{font-family:'Anton',sans-serif;font-size:clamp(2.8rem,7vw,6.5rem);letter-spacing:.05em;color:var(--wht)}
-.vis-ui h2 em{color:var(--org);font-style:normal;display:block}
-.vis-btns{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1.4rem}
-.vb{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.12em;padding:.38rem .9rem;border:1px solid var(--bdr);color:var(--gry);background:rgba(8,8,8,.75);text-transform:uppercase;transition:border-color .2s,color .2s;cursor:pointer}
-.vb.on,.vb:hover{border-color:var(--org);color:var(--org)}
+
 
 #gallery{background:var(--blk);padding:6.5rem 0}
 .gallery-grid{display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:auto auto;gap:3px;margin-top:2.5rem}
@@ -281,7 +268,6 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   <a href="#" class="logo">JERI<em>.</em>NOVA</a>
   <ul class="nav-links">
     <li><a href="#music">Music</a></li>
-    <li><a href="#visuals">Visuals</a></li>
     <li><a href="#gallery">Gallery</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#events">Events</a></li>
@@ -295,7 +281,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   <div class="hero-inner">
     <span class="hero-kicker">— Electronic Music Artist &amp; DJ —</span>
     <h1 class="hero-name">JERI<em>NOVA</em></h1>
-    <p class="hero-tag">Las Vegas &nbsp;·&nbsp; Techno &nbsp;·&nbsp; Ambient &nbsp;·&nbsp; Electronic</p>
+    <p class="hero-tag">Las Vegas &nbsp;·&nbsp; Live Sound &nbsp;·&nbsp; House &nbsp;·&nbsp; Hip Hop</p>
     <div id="hviz"></div>
     <div class="hero-btns">
       <a href="#music" class="btn-o">Listen Now</a>
@@ -314,21 +300,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   </div>
 </section>
 
-<section id="visuals">
-  <div class="vis-stage">
-    <canvas id="vis-canvas"></canvas>
-    <div class="vis-ui">
-      <span class="sec-num">02 — Interactive Visuals</span>
-      <h2>SOUND<em>IN MOTION</em></h2>
-      <div class="vis-btns">
-        <button class="vb on" onclick="setVizMode(0,this)">Spectrum</button>
-        <button class="vb" onclick="setVizMode(1,this)">Waveform</button>
-        <button class="vb" onclick="setVizMode(2,this)">Radial</button>
-        <button class="vb" onclick="setVizMode(3,this)">Orbit</button>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <section id="gallery">
   <div class="wrap">
@@ -372,7 +344,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
         <h2 class="sec-h">Sound. <span>Vision.</span><br>Motion.</h2>
         <p>Jeri Nova is a Las Vegas-based electronic music artist and producer whose sound traverses the outer edges of <strong>techno, ambient, and experimental electronic music</strong> — with an ear tuned to the cosmos and a heart locked to the grid.</p>
         <p>Every live set is an immersive experience where visuals and sound collapse into a single unified force — leaving audiences suspended between rhythm and reverie. Whether it's a sweaty club basement or an open desert stage, Jeri Nova brings the frequency.</p>
-        <p>Follow on Instagram: <a href="https://www.instagram.com/jeri_nova" target="_blank">@jeri_nova</a><br>Email: <a href="mailto:jerinova@gmail.com">jerinova@gmail.com</a></p>
+        <p>Follow on Instagram: <a href="https://www.instagram.com/jeri_nova" target="_blank">@jeri_nova</a><br>Email: <a href="/cdn-cgi/l/email-protection#e38986918a8d8c9582a3848e828a8fcd808c8e"><span class="__cf_email__" data-cfemail="79131c0b1017160f18391e14181015571a1614">[email&#160;protected]</span></a></p>
         <div class="stats">
           <div class="stat"><span class="sn">8+</span><span class="sl">Years</span></div>
           <div class="stat"><span class="sn">200+</span><span class="sl">Sets</span></div>
@@ -404,7 +376,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
         <h2>Let's Make<br><em>Noise</em> Together</h2>
         <p>Available for bookings, festival slots, collaborations, licensing, and press.</p>
         <div class="clinks">
-          <a href="mailto:jerinova@gmail.com" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg></div><div><span class="clink-lbl">Email</span><span class="clink-val"><em>jerinova</em>@gmail.com</span></div></a>
+          <a href="/cdn-cgi/l/email-protection#b6dcd3c4dfd8d9c0d7f6d1dbd7dfda98d5d9db" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg></div><div><span class="clink-lbl">Email</span><span class="clink-val"><em>jerinova</em>@gmail.com</span></div></a>
           <a href="https://www.instagram.com/jeri_nova" target="_blank" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="#ff5500" stroke="none"/></svg></div><div><span class="clink-lbl">Instagram</span><span class="clink-val"><em>@jeri_nova</em></span></div></a>
           <a href="https://soundcloud.com/jeri-nova" target="_blank" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="#ff5500"><path d="M1 17.5a3 3 0 0 0 3 2.5h13a4 4 0 0 0 0-8h-.1a6 6 0 0 0-11.6 1.5A3 3 0 0 0 1 17.5z"/></svg></div><div><span class="clink-lbl">SoundCloud</span><span class="clink-val"><em>soundcloud.com</em>/jeri-nova</span></div></a>
           <a href="https://github.com/jerinovahub/jerinovawebsite" target="_blank" class="clink"><div class="clink-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="#ff5500"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.22.68-.48v-1.69c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg></div><div><span class="clink-lbl">GitHub</span><span class="clink-val"><em>jerinovahub</em>/jerinovawebsite</span></div></a>
@@ -451,7 +423,7 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
 
 <audio id="aud" preload="none"></audio>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* All DOM-dependent code runs after page loads */
 window.addEventListener('DOMContentLoaded', function(){
 
@@ -528,93 +500,7 @@ window.addEventListener('DOMContentLoaded', function(){
     requestAnimationFrame(draw);
   })();
 
-  /* Visualizer */
-  var vc=document.getElementById('vis-canvas'), vctx=vc.getContext('2d');
-  var VW, VH, vt=0;
-  function rszV(){ var r=vc.parentElement.getBoundingClientRect(); VW=vc.width=r.width; VH=vc.height=r.height; }
-  rszV(); window.addEventListener('resize', rszV);
-  var BINS=128, fk=new Float32Array(BINS), ap=0;
-  var vparts=[];
-  for(var i=0; i<110; i++) vparts.push({x:Math.random()*1400,y:Math.random()*700,vx:(Math.random()-0.5)*0.7,vy:(Math.random()-0.5)*0.7,r:Math.random()*2.2+0.4,life:Math.random(),isOrg:Math.random()>0.5});
-  function updFake(){
-    ap+=0.02;
-    for(var i=0;i<BINS;i++){
-      var f=i/BINS,bass=i<20?Math.pow(1-f*5,2)*0.88:0,mid=(i>=20&&i<70)?Math.sin(f*Math.PI*3)*0.5:0,hi=i>=70?(1-f)*0.32:0,wave=Math.sin(ap*2.1+i*0.19)*0.28+0.28,kick=Math.max(0,Math.sin(ap*3.9)*0.55)*(i<12?1:0);
-      fk[i]=Math.max(0,Math.min(1,bass+mid+hi+wave+kick+(Math.random()*0.055)));
-    }
-  }
-  function drawSpectrum(){
-    var bw=VW/BINS;
-    for(var i=0;i<BINS;i++){
-      var h=fk[i]*VH*0.8,x=i*bw,isB=i%9===0;
-      vctx.fillStyle=isB?'rgba(29,160,242,'+(0.55+fk[i]*0.45)+')':'rgba(255,85,0,'+(0.58+fk[i]*0.42)+')';
-      vctx.fillRect(x,VH/2-h/2,bw-0.7,h);
-      vctx.fillStyle=isB?'rgba(29,160,242,.07)':'rgba(255,85,0,.07)';
-      vctx.fillRect(x,VH/2+h/2,bw-0.7,7);
-    }
-  }
-  function drawWaveform(){
-    var sets=[['rgba(255,85,0,.85)',2,1],['rgba(29,160,242,.4)',1,0.58]];
-    for(var s=0;s<sets.length;s++){
-      vctx.strokeStyle=sets[s][0];vctx.lineWidth=sets[s][1];vctx.shadowColor=sets[s][0];vctx.shadowBlur=sets[s][1]===2?9:0;
-      vctx.beginPath();
-      for(var i=0;i<BINS;i++){var x=i/BINS*VW,y=VH/2+(fk[i]-0.5)*VH*sets[s][2];i===0?vctx.moveTo(x,y):vctx.lineTo(x,y);}
-      vctx.stroke();
-    }
-    vctx.shadowBlur=0;
-  }
-  function drawRadial(){
-    var cx=VW/2,cy=VH/2,mR=Math.min(VW,VH)*0.38;
-    for(var i=0;i<BINS;i++){
-      var angle=i/BINS*Math.PI*2-Math.PI/2,amp=fk[i],r1=mR*0.28,r2=r1+amp*mR*0.72,isB=i%9===0;
-      vctx.strokeStyle=isB?'rgba(29,160,242,'+(0.55+amp*0.45)+')':'rgba(255,85,0,'+(0.58+amp*0.42)+')';
-      vctx.lineWidth=2;vctx.beginPath();
-      vctx.moveTo(cx+Math.cos(angle)*r1,cy+Math.sin(angle)*r1);
-      vctx.lineTo(cx+Math.cos(angle)*r2,cy+Math.sin(angle)*r2);
-      vctx.stroke();
-    }
-    var avg=0;for(var i=0;i<8;i++)avg+=fk[i];avg/=8;
-    var g=vctx.createRadialGradient(cx,cy,0,cx,cy,mR*0.5*avg+10);
-    g.addColorStop(0,'rgba(255,85,0,'+(0.22*avg)+')');g.addColorStop(1,'transparent');
-    vctx.fillStyle=g;vctx.beginPath();vctx.arc(cx,cy,mR*0.5*avg+10,0,Math.PI*2);vctx.fill();
-  }
-  function drawOrbit(){
-    var avg=0;for(var i=0;i<24;i++)avg+=fk[i];avg/=24;
-    for(var i=0;i<vparts.length;i++){
-      var p=vparts[i];
-      p.life+=0.004+avg*0.018;
-      if(p.life>1){p.life=0;p.x=Math.random()*VW;p.y=Math.random()*VH;}
-      p.x+=p.vx*(1+avg*2.4);p.y+=p.vy*(1+avg*2.4);
-      if(p.x<0||p.x>VW)p.vx*=-1;if(p.y<0||p.y>VH)p.vy*=-1;
-      var op=Math.sin(p.life*Math.PI)*0.8;
-      vctx.beginPath();vctx.arc(p.x,p.y,p.r*(1+avg*1.7),0,Math.PI*2);
-      vctx.fillStyle=p.isOrg?'rgba(255,85,0,'+op+')':'rgba(29,160,242,'+(op*0.75)+')';
-      vctx.fill();
-      for(var j=0;j<vparts.length;j++){
-        var q=vparts[j],dx=p.x-q.x,dy=p.y-q.y,d=Math.sqrt(dx*dx+dy*dy);
-        if(d<85&&d>0){vctx.strokeStyle=p.isOrg?'rgba(255,85,0,'+((1-d/85)*0.1)+')':'rgba(29,160,242,'+((1-d/85)*0.07)+')';vctx.lineWidth=0.5;vctx.beginPath();vctx.moveTo(p.x,p.y);vctx.lineTo(q.x,q.y);vctx.stroke();}
-      }
-    }
-  }
-  (function vizLoop(){
-    updFake();vt+=0.015;vctx.clearRect(0,0,VW,VH);
-    if(vMode===0)drawSpectrum();
-    else if(vMode===1)drawWaveform();
-    else if(vMode===2)drawRadial();
-    else drawOrbit();
-    requestAnimationFrame(vizLoop);
-  })();
-
   /* Contact form */
   document.getElementById('contact-form').addEventListener('submit', function(e){
     e.preventDefault();
-    var btn=this.querySelector('.fsub');
-    btn.textContent='Sent \u2713'; btn.style.background='var(--blu)';
-    var f=this;
-    setTimeout(function(){btn.textContent='Send Message';btn.style.background='var(--org)';f.reset();},3000);
-  });
-
-}); /* end DOMContentLoaded */
-</script>
-</body>
-</html>
+    var btn=this.qu
