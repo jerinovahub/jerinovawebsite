@@ -77,6 +77,28 @@ function seekTo(e){
 }
 function fmt(s){var m=Math.floor(s/60),sc=Math.floor(s%60);return m+':'+(sc<10?'0':'')+sc;}
 function updatePBIcon(){
+  /* Build track list */
+  var tl = document.getElementById('tracklist');
+  if(tl && tl.children.length === 0){
+    for(var i=0; i<TRACKS.length; i++){
+      (function(idx){
+        var div = document.createElement('div');
+        div.className = 'track';
+        div.style.cssText = 'display:grid;grid-template-columns:40px 1fr 140px 58px;align-items:center;gap:1rem;padding:.8rem 1.1rem;background:#181818;border:1px solid transparent;cursor:pointer;margin-bottom:2px';
+        div.onclick = function(){ loadTrack(idx, false); };
+        div.innerHTML = '<div style="font-family:Space Mono,monospace;font-size:.68rem;color:#444;text-align:center">'+String(idx+1).padStart(2,'0')+'</div>'
+          +'<div style="display:flex;align-items:center;gap:.8rem;min-width:0">'
+          +'<div style="width:30px;height:30px;border-radius:50%;background:#ff5500;display:flex;align-items:center;justify-content:center;flex-shrink:0">'
+          +'<svg width="11" height="11" viewBox="0 0 11 11" fill="#080808"><path d="M2 1l8 4.5-8 4.5z"/></svg></div>'
+          +'<div><div style="font-size:.88rem;font-weight:500;color:#f0f0f0">'+TRACKS[idx].title+'</div>'
+          +'<div style="font-size:.72rem;color:#888;margin-top:.1rem">Jeri Nova</div></div></div>'
+          +'<div style="height:28px;display:flex;align-items:center;gap:1px;overflow:hidden;opacity:.5"></div>'
+          +'<div style="font-family:Space Mono,monospace;font-size:.63rem;color:#444;text-align:right">—</div>';
+        tl.appendChild(div);
+      })(i);
+    }
+  }
+});
   var ico=document.getElementById('pb-ico');
   if(!ico)return;
   ico.innerHTML=isPlaying
@@ -448,28 +470,6 @@ window.addEventListener('DOMContentLoaded', function(){
     if(rows[curIdx]) rows[curIdx].querySelector('.tdur').textContent = fmt(a.duration);
   });
   a.addEventListener('ended', nextTrack);
-
-  /* Build track list */
-  var tl = document.getElementById('tracklist');
-  for(var i=0; i<TRACKS.length; i++){
-    (function(idx){
-      var div = document.createElement('div');
-      div.className = 'track';
-      div.onclick = function(){ loadTrack(idx); };
-      var wbars = '';
-      for(var j=0; j<22; j++){
-        var h = Math.floor(Math.random()*20+4);
-        wbars += '<div class="tw" style="height:'+h+'px;--mn:'+Math.floor(h*0.3)+'px;--mx:'+h+'px;animation:hbounce '+(0.5+Math.random()*0.65).toFixed(2)+'s ease-in-out infinite alternate;animation-delay:'+(Math.random()*0.5).toFixed(2)+'s"></div>';
-      }
-      div.innerHTML = '<div class="tn">'+String(idx+1).padStart(2,'0')+'</div>'
-        +'<div class="tinfo"><div class="tplay"><svg width="11" height="11" viewBox="0 0 11 11" fill="#080808"><path d="M2 1l8 4.5-8 4.5z"/></svg></div>'
-        +'<div class="tmeta"><div class="tt">'+TRACKS[idx].title+'</div><div class="ta">Jeri Nova</div></div></div>'
-        +'<div class="twav">'+wbars+'</div><div class="tdur">—</div>';
-      tl.appendChild(div);
-    })(i);
-  }
-
-
 
   /* Hero waveform */
   var w = document.getElementById('hviz');
