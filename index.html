@@ -10,6 +10,8 @@
 <!-- ALL FUNCTIONS DEFINED IN HEAD — Cloudflare cannot interfere here -->
 <script>
 var MUSIC_BASE='https://raw.githubusercontent.com/jerinovahub/music/main/';
+var DROPS_BASE='https://raw.githubusercontent.com/jerinovahub/drops/main/';
+var DROPS_ART='https://raw.githubusercontent.com/jerinovahub/drops/main/11.png';
 var TRACKS=[
   {title:'Amour',            file:'AMOUR%2000.mp3'},
   {title:'Colours Mn Edit',  file:'Colours%20Mn%20edit.mp3'},
@@ -18,25 +20,43 @@ var TRACKS=[
   {title:'Love How U Want',  file:'Love%20How%20U%20Want%2000.mp3'},
   {title:'Mr Guder',         file:'Mr%20guder%2000.mp3'}
 ];
+var DROPS=[
+  {title:'2 Ur Doom',       file:'2%20Ur%20Doom.mp3'},
+  {title:'Check Michael',   file:'CHECK%20MICHAEL.mp3'},
+  {title:'Film',            file:'FILM.mp3'},
+  {title:'Freakular',       file:'Freakular.mp3'},
+  {title:'He Made A Dub',   file:'He%20Made%20A%20Dub.mp3'},
+  {title:'Rockin Da House Flip', file:'ROCKIN%20DA%20HOUSE%20flip.mp3'}
+];
 var PHOTOS=['DSC00503-Enhanced-NR.jpg','DSC00504-Enhanced-NR.jpg','DSC00505-Enhanced-NR.jpg'];
 var curIdx=-1, isPlaying=false;
 
-function loadTrack(idx){
+function loadTrack(idx,useDrops){
   var a=document.getElementById('aud');
   if(!a)return;
   curIdx=idx;
-  a.src=MUSIC_BASE+TRACKS[idx].file;
+  var list=useDrops?DROPS:TRACKS;
+  var base=useDrops?DROPS_BASE:MUSIC_BASE;
+  a.src=base+list[idx].file;
   var v=document.getElementById('vol');
   a.volume=v?parseFloat(v.value):0.85;
   a.play().catch(function(){});
   isPlaying=true;
   updatePBIcon();
   var t=document.getElementById('pb-title');
-  if(t)t.textContent=TRACKS[idx].title;
+  if(t)t.textContent=list[idx].title;
   var art=document.getElementById('pb-art');
-  if(art)art.innerHTML='<img src="'+PHOTOS[idx%PHOTOS.length]+'" style="width:100%;height:100%;object-fit:cover">';
+  if(art){
+    if(useDrops){
+      art.innerHTML='<img src="'+DROPS_ART+'" style="width:100%;height:100%;object-fit:cover">';
+    } else {
+      art.innerHTML='<img src="'+PHOTOS[idx%PHOTOS.length]+'" style="width:100%;height:100%;object-fit:cover">';
+    }
+  }
   var rows=document.querySelectorAll('.track');
-  for(var i=0;i<rows.length;i++)rows[i].classList.toggle('playing',i===idx);
+  for(var i=0;i<rows.length;i++)rows[i].classList.toggle('playing',i===idx&&!useDrops);
+  var drows=document.querySelectorAll('.drop-track');
+  for(var i=0;i<drows.length;i++)drows[i].classList.toggle('playing',i===idx&&useDrops);
 }
 function togglePlay(){
   var a=document.getElementById('aud');
@@ -118,7 +138,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .sec-sub{font-size:.92rem;color:var(--gry);line-height:1.75;max-width:520px}
 
 #music{background:var(--blk2);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding:6.5rem 0}
-.tracklist{display:flex;flex-direction:column;gap:2px;margin-top:2rem}
+.tracklist{display:flex;flex-direction:column;gap:2px;margin-top:2rem;min-height:10px}
 .track{display:grid;grid-template-columns:40px 1fr 140px 58px;align-items:center;gap:1rem;padding:.8rem 1.1rem;background:var(--blk3);border:1px solid transparent;transition:background .18s,border-color .18s;cursor:pointer}
 .track:hover,.track.playing{background:var(--blk4);border-color:var(--bdro)}
 .track.playing .tn,.track.playing .tt{color:var(--org)}
@@ -168,20 +188,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;align-items:cen
 .rel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1px;background:var(--bdr);border:1px solid var(--bdr);margin-top:2.5rem}
 .rcard{background:var(--blk);overflow:hidden;transition:background .2s;cursor:pointer}
 .rcard:hover{background:var(--blk3)}
-.rcard-art{width:100%;aspect-ratio:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.ra1{background:linear-gradient(135deg,#080800,#1f0a00,#ff5500)}
-.ra2{background:linear-gradient(225deg,#000a14,#001c34,#1da0f2)}
-.ra3{background:linear-gradient(45deg,#090000,#280600,#ff3300)}
-.ra4{background:linear-gradient(315deg,#000810,#001c3a,#0d6aad)}
-.ra5{background:linear-gradient(160deg,#160400,#ff5500,#ff9900)}
-.ra6{background:linear-gradient(200deg,#001020,#1da0f2,#0a2436)}
-.rcard-wav{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2px;padding:0 1rem}
-.rw{width:3px;border-radius:2px;background:rgba(255,255,255,.18);animation:rcwb var(--d,.9s) ease-in-out infinite alternate}
-@keyframes rcwb{from{height:var(--mn,4px)}to{height:var(--mx,36px)}}
-.rcard-over{position:absolute;inset:0;background:rgba(255,85,0,.07);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .25s}
-.rcard:hover .rcard-over{opacity:1}
-.rplay{width:52px;height:52px;border-radius:50%;background:var(--org);display:flex;align-items:center;justify-content:center;transform:scale(.8);transition:transform .25s;box-shadow:0 0 24px rgba(255,85,0,.45)}
-.rcard:hover .rplay{transform:scale(1)}
+.rcard-art{width:100%;aspect-ratio:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--blk3)}
+.rcard-art img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s,filter .3s}
+.rcard:hover .rcard-art img{transform:scale(1.04);filter:brightness(.75)}
+
 .rcard-info{padding:1rem 1.1rem 1.3rem}
 .rtitle{font-size:.88rem;font-weight:600;margin-bottom:.2rem}
 .rmeta{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--gry);letter-spacing:.07em}
@@ -319,12 +329,12 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
     <span class="sec-num">04 — Releases</span>
     <h2 class="sec-h">Latest <span>Drops</span></h2>
     <div class="rel-grid">
-      <div class="rcard" onclick="loadTrack(0)"><div class="rcard-art ra1"><div class="rcard-wav" id="rw1"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div><div class="rcard-info"><p class="rtitle">Amour</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">Electronic</span></div></div>
-      <div class="rcard" onclick="loadTrack(1)"><div class="rcard-art ra2"><div class="rcard-wav" id="rw2"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div><div class="rcard-info"><p class="rtitle">Colours Mn Edit</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Ambient</span></div></div>
-      <div class="rcard" onclick="loadTrack(2)"><div class="rcard-art ra3"><div class="rcard-wav" id="rw3"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div><div class="rcard-info"><p class="rtitle">Fat Diamond Drift</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">Techno</span></div></div>
-      <div class="rcard" onclick="loadTrack(3)"><div class="rcard-art ra4"><div class="rcard-wav" id="rw4"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div><div class="rcard-info"><p class="rtitle">Krispy Wallace</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
-      <div class="rcard" onclick="loadTrack(4)"><div class="rcard-art ra5"><div class="rcard-wav" id="rw5"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div><div class="rcard-info"><p class="rtitle">Love How U Want</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
-      <div class="rcard" onclick="loadTrack(5)"><div class="rcard-art ra6"><div class="rcard-wav" id="rw6"></div><div class="rcard-over"><div class="rplay"><svg width="18" height="18" viewBox="0 0 18 18" fill="#080808"><path d="M4 2.5l11 6.5-11 6.5z"/></svg></div></div></div><div class="rcard-info"><p class="rtitle">Mr Guder</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Ambient</span></div></div>
+      <div class="rcard" onclick="loadTrack(0,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">2 Ur Doom</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
+      <div class="rcard" onclick="loadTrack(1,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">Check Michael</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
+      <div class="rcard" onclick="loadTrack(2,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">Film</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">Hip Hop</span></div></div>
+      <div class="rcard" onclick="loadTrack(3,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">Freakular</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
+      <div class="rcard" onclick="loadTrack(4,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">He Made A Dub</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
+      <div class="rcard" onclick="loadTrack(5,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops artwork" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="rcard-info"><p class="rtitle">Rockin Da House Flip</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">House</span></div></div>
     </div>
   </div>
 </section>
@@ -459,16 +469,7 @@ window.addEventListener('DOMContentLoaded', function(){
     })(i);
   }
 
-  /* Release card waveforms */
-  for(var k=1; k<=6; k++){
-    var el = document.getElementById('rw'+k); if(!el) continue;
-    var isBlue = k%2===0;
-    for(var j=0; j<26; j++){
-      var b = document.createElement('div'); b.className='rw';
-      b.style.cssText = '--mn:'+Math.floor(Math.random()*3+2)+'px;--mx:'+Math.floor(Math.random()*32+6)+'px;--d:'+(Math.random()*0.75+0.42).toFixed(2)+'s;animation-delay:'+(Math.random()*0.55).toFixed(2)+'s;'+(isBlue?'background:rgba(29,160,242,.2)':'background:rgba(255,85,0,.2)');
-      el.appendChild(b);
-    }
-  }
+
 
   /* Hero waveform */
   var w = document.getElementById('hviz');
