@@ -12,7 +12,7 @@
 <!-- Open Graph — controls how the site looks when shared on Facebook, Instagram, iMessage etc -->
 <meta property="og:title" content="JERI NOVA — Electronic Artist | Las Vegas">
 <meta property="og:description" content="Las Vegas-based electronic music artist, DJ and producer. House, Hip Hop, Live Sound.">
-<meta property="og:image" content="https://raw.githubusercontent.com/jerinovahub/jerinovawebsite/main/DSC00503-Enhanced-NR.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/jerinovahub/jerinovawebsite@main/DSC00503-Enhanced-NR.jpg">
 <meta property="og:url" content="https://www.jerinova.com">
 <meta property="og:type" content="website">
 
@@ -20,7 +20,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="JERI NOVA — Electronic Artist | Las Vegas">
 <meta name="twitter:description" content="Las Vegas-based electronic music artist, DJ and producer. House, Hip Hop, Live Sound.">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/jerinovahub/jerinovawebsite/main/DSC00503-Enhanced-NR.jpg">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/jerinovahub/jerinovawebsite@main/DSC00503-Enhanced-NR.jpg">
 
 <!-- Canonical URL -->
 <link rel="canonical" href="https://www.jerinova.com">
@@ -38,9 +38,10 @@
 
 <script>
 /* ── ALL JS IN HEAD ── Cloudflare only injects into body scripts ── */
-var MUSIC_BASE='https://raw.githubusercontent.com/jerinovahub/music/main/';
-var DROPS_BASE='https://raw.githubusercontent.com/jerinovahub/drops/main/';
-var DROPS_ART='https://raw.githubusercontent.com/jerinovahub/drops/main/11.png';
+/* Using jsDelivr CDN — reliable media delivery from GitHub repos */
+var MUSIC_BASE='https://cdn.jsdelivr.net/gh/jerinovahub/music@main/';
+var DROPS_BASE='https://cdn.jsdelivr.net/gh/jerinovahub/drops@main/';
+var DROPS_ART='https://cdn.jsdelivr.net/gh/jerinovahub/drops@main/11.png';
 var TRACKS=[
   {title:'Amour',              file:'AMOUR%2000.mp3'},
   {title:'Colours Mn Edit',    file:'Colours%20Mn%20edit.mp3'},
@@ -427,14 +428,14 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
     <span class="sec-num">04 — Releases</span>
     <h2 class="sec-h">Latest <span>Drops</span></h2>
     <div class="rel-grid">
-      <div class="rcard" onclick="loadTrack(0,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">2 Ur Doom</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
-      <div class="rcard" onclick="loadTrack(1,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Check Michael</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
-      <div class="rcard" onclick="loadTrack(2,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Film</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">Hip Hop</span></div></div>
-      <div class="rcard" onclick="loadTrack(3,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Freakular</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
-      <div class="rcard" onclick="loadTrack(4,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">He Made A Dub</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
-      <div class="rcard" onclick="loadTrack(5,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Rockin Da House Flip</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">House</span></div></div>
-      <div class="rcard" onclick="loadTrack(6,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Roller Boogie Nutz</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
-      <div class="rcard" onclick="loadTrack(7,true)"><div class="rcard-art"><img src="https://raw.githubusercontent.com/jerinovahub/drops/main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Very Analog</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
+      <div class="rcard" onclick="loadTrack(0,true)"><div class="rcard-art"><img src="https://cdn.jsdelivr.net/gh/jerinovahub/drops@main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">2 Ur Doom</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
+      <div class="rcard" onclick="loadTrack(1,true)"><div class="rcard-art"><img src="https://cdn.jsdelivr.net/gh/jerinovahub/drops@main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Check Michael</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
+      <div class="rcard" onclick="loadTrack(2,true)"><div class="rcard-art"><img src="https://cdn.jsdelivr.net/gh/jerinovahub/drops@main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Film</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">Hip Hop</span></div></div>
+      <div class="rcard" onclick="loadTrack(3,true)"><div class="rcard-art"><img src="https://cdn.jsdelivr.net/gh/jerinovahub/drops@main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Freakular</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
+      <div class="rcard" onclick="loadTrack(4,true)"><div class="rcard-art"><img src="https://cdn.jsdelivr.net/gh/jerinovahub/drops@main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">He Made A Dub</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
+      <div class="rcard" onclick="loadTrack(5,true)"><div class="rcard-art"><img src="https://cdn.jsdelivr.net/gh/jerinovahub/drops@main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Rockin Da House Flip</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">House</span></div></div>
+      <div class="rcard" onclick="loadTrack(6,true)"><div class="rcard-art"><img src="https://cdn.jsdelivr.net/gh/jerinovahub/drops@main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Roller Boogie Nutz</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag o">House</span></div></div>
+      <div class="rcard" onclick="loadTrack(7,true)"><div class="rcard-art"><img src="https://cdn.jsdelivr.net/gh/jerinovahub/drops@main/11.png" alt="Drops"></div><div class="rcard-info"><p class="rtitle">Very Analog</p><p class="rmeta">Jeri Nova &nbsp;·&nbsp; Single</p><span class="rtag b">Electronic</span></div></div>
     </div>
   </div>
 </section>
@@ -526,4 +527,11 @@ footer p{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.1em
   </div>
   <div class="pb-vol">
     <svg width="14" height="14" viewBox="0 0 16 16" fill="#777"><path d="M3 5H1v6h2l4 4V1zm9.54.46a5 5 0 0 1 0 5.08l1.42 1.42a7 7 0 0 0 0-7.92zm-2.83 1.41a2.5 2.5 0 0 1 0 2.26l1.41 1.41a4.5 4.5 0 0 0 0-5.08z"/></svg>
-    
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.85" oninput="setVol(this.value)">
+  </div>
+</div>
+
+<audio id="aud" preload="none" crossorigin="anonymous"></audio>
+
+</body>
+</html>
